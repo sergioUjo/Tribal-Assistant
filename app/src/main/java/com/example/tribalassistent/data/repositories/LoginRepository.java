@@ -52,6 +52,7 @@ public class LoginRepository {
         Result<Player> result = MessagerSync.send(new LogInUser(username, password), EventType.AUTH_LOGIN);
         if (result instanceof Result.Success) {
             setLoggedInUser(((Result.Success<Player>) result).getData());
+            SystemRepository.getInstance().systemIdentify();
         }
         return result;
     }

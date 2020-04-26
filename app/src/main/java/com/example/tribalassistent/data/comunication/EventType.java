@@ -9,10 +9,12 @@ import com.example.tribalassistent.data.model.building.Upgrading;
 import com.example.tribalassistent.data.model.character.CharacterInfo;
 import com.example.tribalassistent.data.model.gamedata.GameData;
 import com.example.tribalassistent.data.model.system.Error;
+import com.example.tribalassistent.data.model.system.Identified;
 import com.example.tribalassistent.data.model.system.Identify;
 import com.example.tribalassistent.data.model.system.Welcome;
 import com.example.tribalassistent.data.model.village.Village;
-import com.example.tribalassistent.data.repositories.VillageGameBatch;
+import com.example.tribalassistent.data.model.village.VillageGameBatch;
+import com.example.tribalassistent.data.model.village.VillageIds;
 
 public enum EventType {
     AUTH_LOGIN("Authentication/login", LogInUser.class),
@@ -20,12 +22,14 @@ public enum EventType {
     AUTH_CHARACTER_SELECTED("Authentication/characterSelected", CharacterSelected.class),
     SYSTEM_WELCOME("System/welcome", Welcome.class),
     SYSTEM_IDENTIFY("System/identify", Identify.class),
+    SYSTEM_IDENTIFIED("System/identified", Identified.class),
     SYSTEM_ERROR("System/error", Error.class),
     LOGIN_SUCCESS("Login/success", Player.class),
     MESSAGE_ERROR("Message/error", Error.class),
     GET_GAME_DATA("GameDataBatch/getGameData", null),
     GAME_DATA("GameDataBatch/gameData", GameData.class),
-    GET_VILLAGE_DATA("VillageBatch/getVillageData", VillageGameBatch.class),
+    GET_VILLAGE_DATA("VillageBatch/getVillageData", VillageIds.class),
+    VILLAGE_DATA("VillageBatch/villageData", VillageGameBatch.class),
     CHARACTER_INFO("Character/Info", CharacterInfo.class),
     BUILDING_UPGRADE("Building/upgrade", Upgrade.class),
     BUILDING_UPGRADING("Building/upgrading", Upgrading.class),

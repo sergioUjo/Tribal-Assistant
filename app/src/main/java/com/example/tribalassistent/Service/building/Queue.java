@@ -1,18 +1,24 @@
 package com.example.tribalassistent.Service.building;
 
+import android.util.Log;
+
+import androidx.annotation.Nullable;
+
+import com.example.tribalassistent.data.comunication.EventType;
+import com.example.tribalassistent.data.comunication.Observer;
+import com.example.tribalassistent.data.comunication.Subject;
 import com.example.tribalassistent.data.model.common.BuildingName;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import lombok.Getter;
-
-public class Queue {
+public class Queue extends ArrayList<String> implements Subject {
+    private static final String TAG = "Queue";
     private static final Builder BUILDER = Builder.getInstance();
     private static List<String> infiniteQueue;
-    private List<String> userQueue;
+    private List<Observer> observers;
     private boolean auto;
-    @Getter
     private int villageId;
 
     static {
@@ -23,19 +29,42 @@ public class Queue {
     }
 
     public Queue(int villageId) {
+        super();
         this.villageId = villageId;
-        userQueue = new LinkedList<>();
+        observers = new ArrayList<>();
     }
 
-    public void add(String building) {
-        userQueue.add(building);
+
+    @Override
+    public boolean add(String building) {
+        Log.d(TAG, "Added " + building);
+        boolean result = super.add(building);
         build();
+        notifyObservers();
+        return result;
+    }
+
+    @Override
+    public String remove(int index) {
+        String result = super.remove(index);
+        Log.d(TAG, "Removed " + result);
+        notifyObservers();
+        return result;
+    }
+
+    @Override
+    public boolean remove(@Nullable Object o) {
+        boolean result = super.remove(o);
+        Log.d(TAG, "Removed " + o.toString());
+        notifyObservers();
+        return result;
     }
 
     public void build() {
-        for (String building : userQueue) {
+
+        for (String building : this) {
             if (BUILDER.build(building, villageId)) {
-                userQueue.remove(building);
+                this.remove(building);
                 return;
             }
         }
@@ -46,6 +75,23 @@ public class Queue {
                 }
             }
         }
+
     }
 
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public Object getEvent(EventType eventType) {
+        return null;
+    }
+
+    @Override
+    public void notifyObservers() {
+        for (Observer observer : observers) {
+            observer.update(this);
+        }
+    }
 }

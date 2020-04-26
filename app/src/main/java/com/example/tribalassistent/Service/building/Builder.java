@@ -1,5 +1,7 @@
 package com.example.tribalassistent.Service.building;
 
+import android.util.Log;
+
 import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.comunication.MessagerSync;
 import com.example.tribalassistent.data.comunication.Result;
@@ -8,10 +10,11 @@ import com.example.tribalassistent.data.model.common.BuildingName;
 import com.example.tribalassistent.data.model.common.Resources;
 import com.example.tribalassistent.data.model.village.Building;
 import com.example.tribalassistent.data.repositories.GameDataBatch;
-import com.example.tribalassistent.data.repositories.VillageGameBatch;
+import com.example.tribalassistent.data.repositories.VillageRepository;
 
 public class Builder {
-    private static final VillageGameBatch VILLAGE_BATCH = VillageGameBatch.getInstance();
+    private static final String TAG = "Builder";
+    private static final VillageRepository VILLAGE_BATCH = VillageRepository.getInstance();
     private static final GameDataBatch GAME_BATCH = GameDataBatch.getInstance();
     private static Builder instance;
 
@@ -26,7 +29,10 @@ public class Builder {
     }
 
     public boolean build(String buildingName, int villageId) {
-        if (VILLAGE_BATCH.getVillageData(villageId).getQueue().size() == 2) {
+        Log.d(TAG, "Received request from " + villageId + " to build " + buildingName);
+
+        if (VILLAGE_BATCH.getVillageData(villageId).getQueue().getUnlocked_slots() == 0) {
+            Log.d(TAG, "No building slots available");
             return false;
         }
         Building building = VILLAGE_BATCH.getBuilding(buildingName, villageId);
@@ -38,6 +44,7 @@ public class Builder {
 
             return result instanceof Result.Success;
         }
+        Log.d(TAG, "Not enough resources or doesn't have required level");
         return false;
     }
 

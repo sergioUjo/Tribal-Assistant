@@ -11,26 +11,27 @@ import com.example.tribalassistent.data.model.village.Building;
 import com.example.tribalassistent.data.model.village.ProductionRates;
 import com.example.tribalassistent.data.model.village.Village;
 import com.example.tribalassistent.data.model.village.VillageData;
+import com.example.tribalassistent.data.model.village.VillageGameBatch;
+import com.example.tribalassistent.data.model.village.VillageIds;
 
 import java.util.Date;
-import java.util.Map;
 
 import lombok.Setter;
 
 @Setter
-public class VillageGameBatch implements Observer {
-    private static VillageGameBatch instance;
-    private Map<Integer, VillageData> villageData;
+public class VillageRepository implements Observer {
+    private static VillageRepository instance;
+    private VillageGameBatch villageData;
 
 
-    private VillageGameBatch() {
+    private VillageRepository() {
         villageData = requestVillageData();
         MessagerSync.getInstance().registerObserver(this);
     }
 
-    public static VillageGameBatch getInstance() {
+    public static VillageRepository getInstance() {
         if (instance == null) {
-            instance = new VillageGameBatch();
+            instance = new VillageRepository();
         }
         return instance;
     }
@@ -46,6 +47,8 @@ public class VillageGameBatch implements Observer {
     public Resources getResources(int villageId) {
         Village village = getVillageData(villageId).getVillage();
         Resources resources = village.getResources();
+        if (true)
+            return resources;
         ProductionRates rates = village.getProduction_rates();
 
         int lastUpdate = village.getRes_last_update();
@@ -66,13 +69,13 @@ public class VillageGameBatch implements Observer {
         return (int) (current + rate * timeInterval);
     }
 
-    private Map<Integer, VillageData> requestVillageData() {
-        Result result = MessagerSync.send(CharacterRepository.getInstance().getVillageIds(), EventType.GET_VILLAGE_DATA);
+    private VillageGameBatch requestVillageData() {
+        Result result = MessagerSync.send(new VillageIds(CharacterRepository.getInstance().getVillageIds()), EventType.GET_VILLAGE_DATA);
         if (result instanceof Result.Error) {
-            System.out.println(((Result.Error) result).getError());
+            System.out.println(((Result.Error) result).getMessage());
             return null;
         }
-        return ((Result.Success<Map<Integer, VillageData>>) result).getData();
+        return ((Result.Success<VillageGameBatch>) result).getData();
     }
 
 

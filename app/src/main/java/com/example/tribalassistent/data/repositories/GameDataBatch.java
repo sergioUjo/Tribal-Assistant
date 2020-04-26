@@ -29,7 +29,7 @@ public class GameDataBatch {
     private GameData requestGameData() {
         Result result = MessagerSync.send(null, EventType.GET_GAME_DATA);
         if (result instanceof Result.Error) {
-            System.out.println(((Result.Error) result).getError());
+            System.out.println(((Result.Error) result).getMessage());
             return null;
         }
         return ((Result.Success<GameData>) result).getData();

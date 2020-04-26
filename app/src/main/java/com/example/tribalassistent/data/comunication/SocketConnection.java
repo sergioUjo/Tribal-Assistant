@@ -26,7 +26,6 @@ public class SocketConnection {
             mSocket.on("msg", onMsg);
             mSocket.on("ping", onPing);
             mSocket.on("pong", onPong);
-            mSocket.on(Socket.EVENT_CONNECT, onConnect);
             mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
             mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
             mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectTimeout);
@@ -53,11 +52,7 @@ public class SocketConnection {
         mSocket.emit("msg", jsonObject);
     }
 
-    private static Emitter.Listener onConnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-        }
-    };
+
     private static Emitter.Listener onPing = new Emitter.Listener() {
         @Override
         public void call(Object... args) {

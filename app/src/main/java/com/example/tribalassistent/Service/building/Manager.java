@@ -2,8 +2,8 @@ package com.example.tribalassistent.Service.building;
 
 import com.example.tribalassistent.data.repositories.CharacterRepository;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -13,12 +13,12 @@ public class Manager implements Runnable {
     private static final int INITIAL_TIME = 0;
     private static final int DELAY = 300;
     private static Manager instance;
-    private List<Queue> queues;
+    private Map<Integer, Queue> queues;
 
     private Manager() {
-        queues = new LinkedList<>();
+        queues = new HashMap<>();
         for (int villageId : CharacterRepository.getInstance().getVillageIds()) {
-            queues.add(new Queue(villageId));
+            queues.put(villageId, new Queue(villageId));
         }
         WORKER.scheduleWithFixedDelay(this, INITIAL_TIME, DELAY, TimeUnit.SECONDS);
     }
@@ -32,16 +32,17 @@ public class Manager implements Runnable {
 
     @Override
     public void run() {
-        for (Queue queue : queues) {
+        for (Queue queue : queues.values()) {
             queue.build();
         }
     }
 
     public void run(Integer villageId) {
-        for (Queue queue : queues) {
-            if (queue.getVillageId() == villageId) {
-                queue.build();
-            }
-        }
+        queues.get(villageId).build();
     }
+
+    public Queue getQueue(int villageId) {
+        return queues.get(villageId);
+    }
+
 }

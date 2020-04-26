@@ -24,16 +24,10 @@ public class SystemRepository implements Observer {
 
     @Override
     public void update(Subject observable) {
-        systemWelcome(observable.getEvent(EventType.SYSTEM_WELCOME));
+        //systemWelcome(observable.getEvent(EventType.SYSTEM_WELCOME));
     }
 
-    private void systemWelcome(Object event) {
-        if (event != null) {
-            if (LoginRepository.getInstance().isLoggedIn()) {
-                //TODO send  token
-            } else {
-                MessagerSync.send(new Identify(), EventType.SYSTEM_IDENTIFY);
-            }
-        }
+    public void systemIdentify() {
+        MessagerSync.send(new Identify(), EventType.SYSTEM_IDENTIFY);
     }
 }

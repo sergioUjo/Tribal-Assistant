@@ -2,6 +2,8 @@ package com.example.tribalassistent.data.comunication;
 
 import android.os.AsyncTask;
 
+import com.example.tribalassistent.data.model.system.Error;
+
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;

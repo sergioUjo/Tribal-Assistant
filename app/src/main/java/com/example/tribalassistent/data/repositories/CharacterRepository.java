@@ -35,7 +35,7 @@ public class CharacterRepository {
     private CharacterInfo requestInfo() {
         Result result = MessagerSync.send(null, EventType.CHARACTER_GET_INFO);
         if (result instanceof Result.Error) {
-            System.out.println(((Result.Error) result).getError());
+            System.out.println(((Result.Error) result).getMessage());
             return null;
         }
         return ((Result.Success<CharacterInfo>) result).getData();
