@@ -6,16 +6,19 @@ import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.comunication.Observer;
+import com.example.tribalassistent.data.comunication.OnResultListener;
+import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.comunication.Subject;
+import com.example.tribalassistent.data.model.building.Upgrading;
 import com.example.tribalassistent.data.model.common.BuildingName;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Queue extends ArrayList<String> implements Subject {
+public class Queue extends ArrayList<String> implements Subject, OnResultListener<Upgrading> {
     private static final String TAG = "Queue";
-    private static final Builder BUILDER = Builder.getInstance();
+    private static final Builder BUILDER = new Builder();
     private static List<String> infiniteQueue;
     private List<Observer> observers;
     private boolean auto;
@@ -32,6 +35,7 @@ public class Queue extends ArrayList<String> implements Subject {
         super();
         this.villageId = villageId;
         observers = new ArrayList<>();
+        BUILDER.setOnEventListener(this);
     }
 
 
@@ -61,18 +65,12 @@ public class Queue extends ArrayList<String> implements Subject {
     }
 
     public void build() {
-
         for (String building : this) {
-            if (BUILDER.build(building, villageId)) {
-                this.remove(building);
-                return;
-            }
+            BUILDER.build(building, villageId);
         }
         if (auto) {
             for (String building : infiniteQueue) {
-                if (BUILDER.build(building, villageId)) {
-                    return;
-                }
+                BUILDER.build(building, villageId);
             }
         }
 
@@ -92,6 +90,16 @@ public class Queue extends ArrayList<String> implements Subject {
     public void notifyObservers() {
         for (Observer observer : observers) {
             observer.update(this);
+        }
+    }
+
+    @Override
+    public void onResult(Result<Upgrading> result) {
+        try {
+            Upgrading upgrading = result.getData();
+            this.remove(upgrading.getJob().getBuilding());
+        } catch (NoSuchFieldException e) {
+            Log.d(TAG, e.getMessage());
         }
     }
 }

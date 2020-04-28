@@ -12,12 +12,13 @@ public class Manager implements Runnable {
     private static final ScheduledExecutorService WORKER = Executors.newSingleThreadScheduledExecutor();
     private static final int INITIAL_TIME = 0;
     private static final int DELAY = 300;
+    private static CharacterRepository characterRepository = CharacterRepository.getInstance();
     private static Manager instance;
     private Map<Integer, Queue> queues;
 
     private Manager() {
         queues = new HashMap<>();
-        for (int villageId : CharacterRepository.getInstance().getVillageIds()) {
+        for (int villageId : characterRepository.getVillageIds()) {
             queues.put(villageId, new Queue(villageId));
         }
         WORKER.scheduleWithFixedDelay(this, INITIAL_TIME, DELAY, TimeUnit.SECONDS);

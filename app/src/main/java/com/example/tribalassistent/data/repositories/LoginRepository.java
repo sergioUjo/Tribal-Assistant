@@ -1,24 +1,21 @@
 package com.example.tribalassistent.data.repositories;
 
+import android.util.Log;
+
 import com.example.tribalassistent.data.comunication.EventType;
-import com.example.tribalassistent.data.comunication.MessagerSync;
-import com.example.tribalassistent.data.comunication.Result;
+import com.example.tribalassistent.data.comunication.OnResultListener;
+import com.example.tribalassistent.data.comunication.SocketRequest;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
 import com.example.tribalassistent.data.model.authentication.CharacterSelection;
 import com.example.tribalassistent.data.model.authentication.LogInUser;
 import com.example.tribalassistent.data.model.authentication.Player;
 
-/**
- * Class that requests authentication and user information from the remote data source and
- * maintains an in-memory cache of login status and user credentials information.
- */
 public class LoginRepository {
-
-    private static volatile LoginRepository instance;
-
-    // If user credentials will be cached in local storage, it is recommended it be encrypted
-    // @see https://developer.android.com/training/articles/keystore
+    private static final String TAG = "LoginRepository";
+    private static LoginRepository instance;
     private Player user = null;
+    private OnResultListener<Player> onLogin;
+    private OnResultListener<CharacterSelected> onCharacterSelected;
 
     // private constructor : singleton access
     private LoginRepository() {
@@ -37,29 +34,35 @@ public class LoginRepository {
 
     public void logout() {
         user = null;
-
     }
 
     public Player getUser() {
         return user;
     }
 
-    private void setLoggedInUser(Player user) {
+    public void setLoggedInUser(Player user) {
+        Log.d(TAG, "LLoging in with user " + user.getName());
         this.user = user;
+        SystemRepository.getInstance().systemIdentify();
     }
 
-    public Result<Player> login(String username, String password) {
-        Result<Player> result = MessagerSync.send(new LogInUser(username, password), EventType.AUTH_LOGIN);
-        if (result instanceof Result.Success) {
-            setLoggedInUser(((Result.Success<Player>) result).getData());
-            SystemRepository.getInstance().systemIdentify();
-        }
-        return result;
+    public void login(String username, String password) {
+        SocketRequest<LogInUser, Player> request = new SocketRequest<>();
+        request.setOnResultListener(onLogin);
+        request.doInBackground(new LogInUser(username, password), EventType.AUTH_LOGIN);
     }
 
-    public Result<CharacterSelected> select(int id, String world_id) {
-        Result<CharacterSelected> result = MessagerSync.send(new CharacterSelection(id, world_id), EventType.AUTH_SELECT_CHARACTER);
-        return result;
+    public void select(int id, String world_id) {
+        SocketRequest<CharacterSelection, CharacterSelected> request = new SocketRequest<>();
+        request.setOnResultListener(onCharacterSelected);
+        request.doInBackground(new CharacterSelection(id, world_id), EventType.AUTH_SELECT_CHARACTER);
     }
 
+    public void setOnLogin(OnResultListener<Player> onLogin) {
+        this.onLogin = onLogin;
+    }
+
+    public void setOnCharacterSelected(OnResultListener<CharacterSelected> onCharacterSelected) {
+        this.onCharacterSelected = onCharacterSelected;
+    }
 }

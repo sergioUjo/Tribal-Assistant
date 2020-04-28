@@ -1,5 +1,7 @@
 package com.example.tribalassistent.data.comunication;
 
+import android.util.Log;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
@@ -13,7 +15,7 @@ import io.socket.emitter.Emitter;
 import io.socket.engineio.client.transports.WebSocket;
 
 public class SocketConnection {
-
+    private static final String TAG = "SocketConnection";
     public static final String SERVER_URL = "https://pt.tribalwars2.com/";
     private static final ObjectMapper MAPPER = new ObjectMapper();
     private static Socket mSocket;
@@ -26,9 +28,6 @@ public class SocketConnection {
             mSocket.on("msg", onMsg);
             mSocket.on("ping", onPing);
             mSocket.on("pong", onPong);
-            mSocket.on(Socket.EVENT_DISCONNECT, onDisconnect);
-            mSocket.on(Socket.EVENT_CONNECT_ERROR, onConnectError);
-            mSocket.on(Socket.EVENT_CONNECT_TIMEOUT, onConnectTimeout);
             mSocket.connect();
 
         } catch (URISyntaxException e) {
@@ -41,14 +40,21 @@ public class SocketConnection {
         @Override
         public void call(Object... args) {
             JSONObject jsonObject = (JSONObject) args[0];
-            System.out.println(jsonObject);
-            MessagerSync.getInstance().received(getEventMsg(jsonObject));
+            Log.d(TAG, "Receiving: " + jsonObject);
+            EventMsg eventMsg = getEventMsg(jsonObject);
+            if (eventMsg != null) {
+                if (eventMsg.getId() != null) {
+                    SocketRequest.received(eventMsg);
+                } else {
+                    SocketNotification.received(eventMsg);
+                }
+            }
         }
     };
 
     public static void sendDataToServer(EventMsg eventMsg) {
         JSONObject jsonObject = getJSON(eventMsg);
-        System.out.println(jsonObject);
+        Log.d(TAG, "Sending: " + jsonObject);
         mSocket.emit("msg", jsonObject);
     }
 
@@ -65,26 +71,9 @@ public class SocketConnection {
             System.out.println("PONG");
         }
     };
-    private static Emitter.Listener onDisconnect = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            System.out.println("Disconnected");
-        }
-    };
-    private static Emitter.Listener onConnectError = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            System.out.println("Connecting Error");
-        }
-    };
-    private static Emitter.Listener onConnectTimeout = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            System.out.println("Timeout");
-        }
-    };
 
-    private static <T> JSONObject getJSON(EventMsg<T> eventMsg) {
+
+    private static JSONObject getJSON(EventMsg eventMsg) {
         try {
             return new JSONObject(MAPPER.writeValueAsString(eventMsg));
         } catch (Exception e) {
@@ -95,7 +84,13 @@ public class SocketConnection {
 
     private static EventMsg getEventMsg(JSONObject jsonObject) {
         String type = jsonObject.optString("type");
-        return getEventMsg(EventType.fromString(type).getClazz(), jsonObject);
+        EventType eventType = EventType.fromString(type);
+        if (eventType == null) {
+            Log.d(TAG, type + " not mapped.");
+            return null;
+        }
+        Class clazz = eventType.getClazz();
+        return getEventMsg(clazz, jsonObject);
     }
 
     private static <T> EventMsg<T> getEventMsg(Class<T> clazz, JSONObject jsonObject) {

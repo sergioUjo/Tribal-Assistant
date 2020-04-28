@@ -12,6 +12,7 @@ import com.example.tribalassistent.data.model.system.Error;
 import com.example.tribalassistent.data.model.system.Identified;
 import com.example.tribalassistent.data.model.system.Identify;
 import com.example.tribalassistent.data.model.system.Welcome;
+import com.example.tribalassistent.data.model.village.LevelChange;
 import com.example.tribalassistent.data.model.village.Village;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.model.village.VillageIds;
@@ -33,6 +34,7 @@ public enum EventType {
     CHARACTER_INFO("Character/Info", CharacterInfo.class),
     BUILDING_UPGRADE("Building/upgrade", Upgrade.class),
     BUILDING_UPGRADING("Building/upgrading", Upgrading.class),
+    BUILDING_LEVEL_CHANGE("Building/levelChanged", LevelChange.class),
     VILLAGE_RESOURCE_CHANGED("Village/resourcesChanged", Village.class),
     CHARACTER_GET_INFO("Character/getInfo", null);
 
