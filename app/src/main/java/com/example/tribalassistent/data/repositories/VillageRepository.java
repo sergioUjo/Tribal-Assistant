@@ -1,5 +1,9 @@
 package com.example.tribalassistent.data.repositories;
 
+import android.util.Log;
+
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.tribalassistent.Service.building.Manager;
 import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.comunication.Observer;
@@ -21,11 +25,12 @@ import lombok.SneakyThrows;
 public class VillageRepository implements Observer {
     private static final String TAG = "VillageRepository";
     private static VillageRepository instance;
-    private VillageGameBatch villageData;
+    private MutableLiveData<VillageGameBatch> villageData;
 
 
     private VillageRepository() {
         SocketNotification.getInstance().registerObserver(this);
+        villageData = new MutableLiveData<>();
     }
 
     public static VillageRepository getInstance() {
@@ -36,28 +41,36 @@ public class VillageRepository implements Observer {
     }
 
 
-    public void getVillageData(final OnResultListener<VillageGameBatch> resultListener) {
+    private void requestVillageData() {
         SocketRequest<VillageIds, VillageGameBatch> request = new SocketRequest<>();
         request.setOnResultListener(new OnResultListener<VillageGameBatch>() {
             @SneakyThrows
             @Override
             public void onResult(Result<VillageGameBatch> villageResult) {
-                villageData = villageResult.getData();
-                resultListener.onResult(villageResult);
+                villageData.setValue(villageResult.getData());
             }
         });
         request.doInBackground(new VillageIds(CharacterRepository.getInstance().getVillageIds()), EventType.GET_VILLAGE_DATA);
     }
 
-    public VillageData getVillageData(int villageId) {
-        return villageData.get(villageId);
+    private VillageData getVillageData(int villageId) {
+        return villageData.getValue().get(villageId);
+    }
+
+    public MutableLiveData<VillageGameBatch> getVillageData() {
+        if (villageData.getValue() == null) {
+            requestVillageData();
+        }
+        return villageData;
     }
 
 
     @Override
     public void update(Subject observable) {
+        Log.d(TAG, "Updating... ");
         resourceChanged((Village) observable.getEvent(EventType.VILLAGE_RESOURCE_CHANGED));
         levelChange((LevelChange) observable.getEvent(EventType.BUILDING_LEVEL_CHANGE));
+        villageData.setValue(villageData.getValue());
     }
 
     private void levelChange(LevelChange remote) {

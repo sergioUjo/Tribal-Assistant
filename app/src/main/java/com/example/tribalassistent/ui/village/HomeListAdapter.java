@@ -15,18 +15,22 @@ import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
 import com.example.tribalassistent.Service.building.Manager;
+import com.example.tribalassistent.data.model.village.Building;
 
 import java.util.List;
+import java.util.Map;
 
 public class HomeListAdapter extends ArrayAdapter<String> {
     private static final String TAG = "HomeListAdapter";
     private static final String ADDED = "Building added to village queue.";
+    private final Map<String, Building> buildings;
     private int villageId;
     private int mResource;
     private Context mContext;
 
-    public HomeListAdapter(@NonNull Context context, int resource, @NonNull List<String> objects, int villageId) {
+    public HomeListAdapter(@NonNull Context context, int resource, @NonNull List<String> objects, Map<String, Building> buildings, int villageId) {
         super(context, resource, objects);
+        this.buildings = buildings;
         this.villageId = villageId;
         this.mResource = resource;
         this.mContext = context;
@@ -37,12 +41,15 @@ public class HomeListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         final String buildingName = getItem(position);
-
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
 
-        TextView textView = convertView.findViewById(R.id.building_name);
+        TextView nameTextView = convertView.findViewById(R.id.building_name);
+        TextView levelTextView = convertView.findViewById(R.id.building_level);
         Button button = convertView.findViewById(R.id.build_button);
+
+        nameTextView.setText(buildingName);
+        levelTextView.setText(buildings.get(buildingName).getLevel().toString());
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -51,7 +58,6 @@ public class HomeListAdapter extends ArrayAdapter<String> {
                 Manager.getInstance().getQueue(villageId).add(buildingName);
             }
         });
-        textView.setText(buildingName);
         return convertView;
     }
 

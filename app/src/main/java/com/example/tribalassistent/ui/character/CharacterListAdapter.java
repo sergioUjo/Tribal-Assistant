@@ -18,10 +18,8 @@ import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.model.authentication.Character;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
 import com.example.tribalassistent.data.model.character.CharacterInfo;
-import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
 import com.example.tribalassistent.data.repositories.LoginRepository;
-import com.example.tribalassistent.data.repositories.VillageRepository;
 import com.example.tribalassistent.ui.village.VillageActivity;
 
 import java.util.List;
@@ -77,11 +75,6 @@ public class CharacterListAdapter extends ArrayAdapter<Character> {
     private void openVillageActivity(int villageId) {
         Intent intent = new Intent(getContext(), VillageActivity.class);
         intent.putExtra("village", villageId);
-        VillageRepository.getInstance().getVillageData(new OnResultListener<VillageGameBatch>() {
-            @Override
-            public void onResult(Result<VillageGameBatch> result) {
-            }
-        });
         getContext().startActivity(intent);
     }
 }

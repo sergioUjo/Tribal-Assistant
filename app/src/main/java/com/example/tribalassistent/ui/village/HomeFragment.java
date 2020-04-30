@@ -1,7 +1,7 @@
 package com.example.tribalassistent.ui.village;
 
-import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,39 +10,45 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.model.common.BuildingName;
+import com.example.tribalassistent.data.model.village.Building;
+import com.example.tribalassistent.data.model.village.VillageData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
-    private Context mContext;
-    private int villageId;
+    private FragmentActivity mContext;
+    private HomeListAdapter listAdapter;
+    private GridView gridView;
 
-    public HomeFragment(int villageId) {
-        super();
-        this.villageId = villageId;
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mContext = getActivity();
-        setupGridView((GridView) view.findViewById(R.id.building_grid_view));
-
+        gridView = view.findViewById(R.id.building_grid_view);
         return view;
     }
 
-    private void setupGridView(GridView gridView) {
-        List<String> names = new ArrayList<>();
-        for (BuildingName name : BuildingName.values()) {
-            names.add(name.getName());
+    public void update(VillageData villageData) {
+        Log.d(TAG, "Village data updating... ");
+        if (listAdapter == null) {
+            setupGridView(villageData);
+        } else {
+            listAdapter.notifyDataSetChanged();
         }
-        HomeListAdapter listAdapter = new HomeListAdapter(mContext, R.layout.layout_building, names, villageId);
+    }
+
+    private void setupGridView(VillageData villageData) {
+        Map<String, Building> buildings = villageData.getVillage().getBuildings();
+        List<String> names = new ArrayList<>(buildings.keySet());
+        listAdapter = new HomeListAdapter(mContext, R.layout.layout_building, names, buildings, villageData.getVillage().getVillageId());
         gridView.setAdapter(listAdapter);
     }
 }
