@@ -1,5 +1,7 @@
 package com.example.tribalassistent.data.repositories;
 
+import androidx.lifecycle.MutableLiveData;
+
 import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.comunication.OnResultListener;
 import com.example.tribalassistent.data.comunication.Result;
@@ -14,9 +16,10 @@ import lombok.SneakyThrows;
 
 public class CharacterRepository {
     private static CharacterRepository instance;
-    private CharacterInfo info;
+    private MutableLiveData<CharacterInfo> info;
 
     private CharacterRepository() {
+        info = new MutableLiveData<>();
     }
 
     public static CharacterRepository getInstance() {
@@ -26,33 +29,31 @@ public class CharacterRepository {
         return instance;
     }
 
-    public void getCharacterInfo(final OnResultListener<CharacterInfo> resultListener) {
-        SocketRequest<Object, CharacterInfo> request = new SocketRequest<>();
-        request.setOnResultListener(new OnResultListener<CharacterInfo>() {
-            @SneakyThrows
-            @Override
-            public void onResult(Result<CharacterInfo> result) {
-                info = result.getData();
-                resultListener.onResult(result);
-            }
-        });
-        request.doInBackground(null, EventType.CHARACTER_GET_INFO);
-    }
-
     public List<Integer> getVillageIds() {
         List<Integer> ids = new LinkedList<>();
-        for (Village village : info.getVillages()) {
+        for (Village village : info.getValue().getVillages()) {
             ids.add(village.getId());
         }
         return ids;
     }
 
-    private void setInfo(Result<CharacterInfo> result) {
-        try {
-            info = result.getData();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+    public MutableLiveData<CharacterInfo> getCharacterInfo() {
+        if (info.getValue() == null) {
+            requestCharacterInfo();
         }
+        return info;
     }
+
+    private void requestCharacterInfo() {
+        SocketRequest<Object, CharacterInfo> request = new SocketRequest<>(new OnResultListener<CharacterInfo>() {
+            @SneakyThrows
+            @Override
+            public void onResult(Result<CharacterInfo> result) {
+                info.postValue(result.getData());
+            }
+        });
+        request.doInBackground(null, EventType.CHARACTER_GET_INFO);
+    }
+
 }
 

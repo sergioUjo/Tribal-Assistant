@@ -14,6 +14,7 @@ public class LoginRepository {
     private static final String TAG = "LoginRepository";
     private static LoginRepository instance;
     private Player user = null;
+
     private OnResultListener<Player> onLogin;
     private OnResultListener<CharacterSelected> onCharacterSelected;
 
@@ -41,20 +42,18 @@ public class LoginRepository {
     }
 
     public void setLoggedInUser(Player user) {
-        Log.d(TAG, "LLoging in with user " + user.getName());
+        Log.d(TAG, "Logging in with user " + user.getName());
         this.user = user;
         SystemRepository.getInstance().systemIdentify();
     }
 
     public void login(String username, String password) {
-        SocketRequest<LogInUser, Player> request = new SocketRequest<>();
-        request.setOnResultListener(onLogin);
+        SocketRequest<LogInUser, Player> request = new SocketRequest<>(onLogin);
         request.doInBackground(new LogInUser(username, password), EventType.AUTH_LOGIN);
     }
 
     public void select(int id, String world_id) {
-        SocketRequest<CharacterSelection, CharacterSelected> request = new SocketRequest<>();
-        request.setOnResultListener(onCharacterSelected);
+        SocketRequest<CharacterSelection, CharacterSelected> request = new SocketRequest<>(onCharacterSelected);
         request.doInBackground(new CharacterSelection(id, world_id), EventType.AUTH_SELECT_CHARACTER);
     }
 

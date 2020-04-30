@@ -26,7 +26,7 @@ public class VillageData {
     private Object ScoutingInfo;
 
     @JsonProperty("Building/queue")
-    private VillageQueue queue;
+    private VillageQueue buildingQueue;
 
     @JsonProperty("Transport/list")
     private Object transport;

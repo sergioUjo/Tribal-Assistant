@@ -1,5 +1,6 @@
 package com.example.tribalassistent.ui.village;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,7 +11,6 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import com.example.tribalassistent.R;
 import com.example.tribalassistent.data.model.village.Building;
@@ -22,7 +22,7 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
-    private FragmentActivity mContext;
+    private Context mContext;
     private HomeListAdapter listAdapter;
     private GridView gridView;
 

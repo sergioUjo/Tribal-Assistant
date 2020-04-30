@@ -36,11 +36,9 @@ public class SystemRepository implements Observer {
     }
 
     public void systemIdentify() {
-        SocketRequest<Identify, Identified> request = new SocketRequest<>();
-        request.setOnResultListener(new OnResultListener<Identified>() {
+        SocketRequest<Identify, Identified> request = new SocketRequest<>(new OnResultListener<Identified>() {
             @Override
             public void onResult(Result<Identified> result) {
-
             }
         });
         request.doInBackground(new Identify(), EventType.SYSTEM_IDENTIFY);

@@ -10,18 +10,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.comunication.OnResultListener;
 import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.model.authentication.Player;
-import com.example.tribalassistent.data.repositories.LoginRepository;
 import com.example.tribalassistent.data.repositories.SystemRepository;
 import com.example.tribalassistent.ui.character.CharacterActivity;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener, OnResultListener<Player> {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
-    private static final LoginRepository LOGIN = LoginRepository.getInstance();
+    private LoginViewModel loginViewModel;
     private Context mContext = this;
     private Button loginButton;
     private EditText userName;
@@ -36,6 +36,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         userName = findViewById(R.id.username);
         userPassword = findViewById(R.id.password);
         loginButton.setOnClickListener(this);
+        loginViewModel = ViewModelProviders.of(this).get(LoginViewModel.class);
+
+        loginViewModel.getLoginResult().observe(this, new Observer<Result<Player>>() {
+            @Override
+            public void onChanged(Result<Player> playerResult) {
+                try {
+                    Player player = playerResult.getData();
+                    loginViewModel.setLoggedIn(player);
+                    openCharacterActivity();
+                } catch (NoSuchFieldException e) {
+                    Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void openCharacterActivity() {
@@ -46,18 +60,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @Override
     public void onClick(View v) {
         Log.d(TAG, "Login button pressed.");
-        LOGIN.setOnLogin(this);
-        LOGIN.login(userName.getText().toString(), userPassword.getText().toString());
-    }
-
-    @Override
-    public void onResult(Result<Player> result) {
-        try {
-            Player player = result.getData();
-            LOGIN.setLoggedInUser(player);
-            openCharacterActivity();
-        } catch (NoSuchFieldException e) {
-            Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
-        }
+        loginViewModel.login(userName.getText().toString(), userPassword.getText().toString());
     }
 }

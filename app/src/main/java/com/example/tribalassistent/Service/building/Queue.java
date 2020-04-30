@@ -11,6 +11,7 @@ import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.comunication.Subject;
 import com.example.tribalassistent.data.model.building.Upgrading;
 import com.example.tribalassistent.data.model.common.BuildingName;
+import com.example.tribalassistent.data.repositories.VillageRepository;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -98,6 +99,7 @@ public class Queue extends ArrayList<String> implements Subject, OnResultListene
         try {
             Upgrading upgrading = result.getData();
             this.remove(upgrading.getJob().getBuilding());
+            VillageRepository.getInstance().addJob(villageId, upgrading.getJob());
         } catch (NoSuchFieldException e) {
             Log.d(TAG, e.getMessage());
         }

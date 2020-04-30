@@ -1,7 +1,6 @@
 package com.example.tribalassistent.ui.character;
 
 import android.content.Context;
-import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,8 @@ import com.example.tribalassistent.data.comunication.OnResultListener;
 import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.model.authentication.Character;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
-import com.example.tribalassistent.data.model.character.CharacterInfo;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
 import com.example.tribalassistent.data.repositories.LoginRepository;
-import com.example.tribalassistent.ui.village.VillageActivity;
 
 import java.util.List;
 
@@ -51,17 +48,7 @@ public class CharacterListAdapter extends ArrayAdapter<Character> {
                 LOGIN.setOnCharacterSelected(new OnResultListener<CharacterSelected>() {
                     @Override
                     public void onResult(Result<CharacterSelected> result) {
-                        CharacterRepository.getInstance().getCharacterInfo(new OnResultListener<CharacterInfo>() {
-                            @Override
-                            public void onResult(Result<CharacterInfo> characterInfoResult) {
-                                try {
-                                    openVillageActivity(characterInfoResult.getData().getVillages().get(0).getId());
-                                } catch (NoSuchFieldException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        });
-
+                        CharacterRepository.getInstance().getCharacterInfo();
                     }
                 });
                 LOGIN.select(character.getCharacter_id(), character.getWorld_id());
@@ -72,9 +59,5 @@ public class CharacterListAdapter extends ArrayAdapter<Character> {
         return convertView;
     }
 
-    private void openVillageActivity(int villageId) {
-        Intent intent = new Intent(getContext(), VillageActivity.class);
-        intent.putExtra("village", villageId);
-        getContext().startActivity(intent);
-    }
+
 }

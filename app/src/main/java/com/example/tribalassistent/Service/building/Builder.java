@@ -18,8 +18,7 @@ public class Builder {
     //private static final GameDataBatch GAME_BATCH = GameDataBatch.getInstance();
 
     public void build(String buildingName, int villageId) {
-        SocketRequest<Upgrade, Upgrading> request = new SocketRequest<>();
-        request.setOnResultListener(onEventListener);
+        SocketRequest<Upgrade, Upgrading> request = new SocketRequest<>(onEventListener);
         request.doInBackground(new Upgrade(buildingName, villageId), EventType.BUILDING_UPGRADE);
     }
 

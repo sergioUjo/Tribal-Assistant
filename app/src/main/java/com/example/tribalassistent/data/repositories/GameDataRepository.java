@@ -12,8 +12,7 @@ public class GameDataRepository {
     private GameData gameData;
 
     private GameDataRepository(final OnResultListener<GameDataRepository> resultListener) {
-        final SocketRequest<Object, GameData> request = new SocketRequest<>();
-        request.setOnResultListener(new OnResultListener<GameData>() {
+        final SocketRequest<Object, GameData> request = new SocketRequest<>(new OnResultListener<GameData>() {
             @Override
             public void onResult(Result<GameData> result) {
                 setGameData(result);

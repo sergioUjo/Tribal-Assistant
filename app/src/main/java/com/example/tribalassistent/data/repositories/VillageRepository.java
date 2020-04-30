@@ -12,16 +12,15 @@ import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.comunication.SocketNotification;
 import com.example.tribalassistent.data.comunication.SocketRequest;
 import com.example.tribalassistent.data.comunication.Subject;
+import com.example.tribalassistent.data.model.building.Job;
 import com.example.tribalassistent.data.model.village.LevelChange;
 import com.example.tribalassistent.data.model.village.Village;
 import com.example.tribalassistent.data.model.village.VillageData;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.model.village.VillageIds;
 
-import lombok.Setter;
 import lombok.SneakyThrows;
 
-@Setter
 public class VillageRepository implements Observer {
     private static final String TAG = "VillageRepository";
     private static VillageRepository instance;
@@ -42,12 +41,11 @@ public class VillageRepository implements Observer {
 
 
     private void requestVillageData() {
-        SocketRequest<VillageIds, VillageGameBatch> request = new SocketRequest<>();
-        request.setOnResultListener(new OnResultListener<VillageGameBatch>() {
+        SocketRequest<VillageIds, VillageGameBatch> request = new SocketRequest<>(new OnResultListener<VillageGameBatch>() {
             @SneakyThrows
             @Override
             public void onResult(Result<VillageGameBatch> villageResult) {
-                villageData.setValue(villageResult.getData());
+                villageData.postValue(villageResult.getData());
             }
         });
         request.doInBackground(new VillageIds(CharacterRepository.getInstance().getVillageIds()), EventType.GET_VILLAGE_DATA);
@@ -64,18 +62,24 @@ public class VillageRepository implements Observer {
         return villageData;
     }
 
+    public void addJob(int village_id, Job job) {
+        getVillageData(village_id).getBuildingQueue().getQueue().add(job);
+        villageData.postValue(villageData.getValue());
+    }
 
     @Override
     public void update(Subject observable) {
         Log.d(TAG, "Updating... ");
         resourceChanged((Village) observable.getEvent(EventType.VILLAGE_RESOURCE_CHANGED));
         levelChange((LevelChange) observable.getEvent(EventType.BUILDING_LEVEL_CHANGE));
-        villageData.setValue(villageData.getValue());
+        villageData.postValue(villageData.getValue());
     }
 
     private void levelChange(LevelChange remote) {
         if (remote != null) {
-            Village local = getVillageData(remote.getVillage_id()).getVillage();
+            VillageData data = getVillageData(remote.getVillage_id());
+            data.getBuildingQueue().getQueue().remove(0);
+            Village local = data.getVillage();
             local.getBuildings().get(remote.getBuilding()).setLevel(remote.getLevel());
             Manager.getInstance().getQueue(remote.getVillage_id()).build();
             Manager.getInstance().run(remote.getVillage_id());
