@@ -3,7 +3,6 @@ package com.example.tribalassistent.data.comunication;
 import android.util.Log;
 
 import com.example.tribalassistent.data.comunication.notification.Notification;
-import com.example.tribalassistent.data.comunication.notification.NotificationFactory;
 import com.example.tribalassistent.data.comunication.request.SocketRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -42,10 +41,7 @@ public class SocketConnection {
 
         if (jsonObject.isNull("id")) {
             Log.d(TAG, "Receiving notification: " + jsonObject);
-            Notification notification = NotificationFactory.getNotification(jsonObject);
-            if (notification != null) {
-                notification.apply();
-            }
+            Notification.received(jsonObject);
         } else {
             Log.d(TAG, "Receiving reponse: " + jsonObject);
             SocketRequest.received(jsonObject);
