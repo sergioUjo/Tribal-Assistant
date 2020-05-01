@@ -1,7 +1,6 @@
 package com.example.tribalassistent.data.comunication.request;
 
 import com.example.tribalassistent.data.comunication.EventMsg;
-import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.comunication.JsonParser;
 import com.example.tribalassistent.data.comunication.OnResultListener;
 import com.example.tribalassistent.data.comunication.SocketConnection;
@@ -37,7 +36,7 @@ public abstract class SocketRequest<I, O> implements Runnable {
     private void onPostExecute(JSONObject jsonObject) {
         Result<O> result;
         String type = jsonObject.optString("type");
-        if (type.equals(EventType.MESSAGE_ERROR.getType()) || type.equals(EventType.SYSTEM_ERROR.getType())) {
+        if (ErrorType.fromString(type) != null) {
             result = new Result<>(JsonParser.parseEvent(jsonObject, Error.class).getData());
         } else {
             result = new Result<>(JsonParser.parseEvent(jsonObject, getClazz()).getData());

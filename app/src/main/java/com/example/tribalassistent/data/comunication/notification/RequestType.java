@@ -1,4 +1,4 @@
-package com.example.tribalassistent.data.comunication;
+package com.example.tribalassistent.data.comunication.notification;
 
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
 import com.example.tribalassistent.data.model.authentication.CharacterSelection;
@@ -17,7 +17,7 @@ import com.example.tribalassistent.data.model.village.Village;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.model.village.VillageIds;
 
-public enum EventType {
+public enum RequestType {
     AUTH_LOGIN("Authentication/login", LogInUser.class),
     AUTH_SELECT_CHARACTER("Authentication/selectCharacter", CharacterSelection.class),
     AUTH_CHARACTER_SELECTED("Authentication/characterSelected", CharacterSelected.class),
@@ -42,7 +42,7 @@ public enum EventType {
     private final String type;
     private final Class clazz;
 
-    private EventType(String type, Class clazz) {
+    private RequestType(String type, Class clazz) {
         this.type = type;
         this.clazz = clazz;
     }
@@ -55,8 +55,8 @@ public enum EventType {
         return clazz;
     }
 
-    public static EventType fromString(String type) {
-        for (EventType b : EventType.values()) {
+    public static RequestType fromString(String type) {
+        for (RequestType b : RequestType.values()) {
             if (b.getType().equalsIgnoreCase(type)) {
                 return b;
             }

@@ -2,7 +2,6 @@ package com.example.tribalassistent.data.comunication.request;
 
 import com.example.tribalassistent.data.comunication.EventMsg;
 import com.example.tribalassistent.data.comunication.EventMsgFactory;
-import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.model.village.VillageIds;
 
@@ -12,7 +11,7 @@ public class VillageGameBatchRequest extends SocketRequest<VillageIds, VillageGa
     private EventMsg<VillageIds> request;
 
     public VillageGameBatchRequest(List<Integer> villageIds) {
-        request = EventMsgFactory.getEvent(new VillageIds(villageIds), EventType.GET_VILLAGE_DATA);
+        request = EventMsgFactory.getEvent(new VillageIds(villageIds), RequestType.GET_VILLAGE_DATA);
     }
 
     @Override
