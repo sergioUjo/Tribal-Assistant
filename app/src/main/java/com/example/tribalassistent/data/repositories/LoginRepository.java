@@ -2,12 +2,10 @@ package com.example.tribalassistent.data.repositories;
 
 import android.util.Log;
 
-import com.example.tribalassistent.data.comunication.EventType;
 import com.example.tribalassistent.data.comunication.OnResultListener;
-import com.example.tribalassistent.data.comunication.SocketRequest;
+import com.example.tribalassistent.data.comunication.request.CharacterSelectRequest;
+import com.example.tribalassistent.data.comunication.request.LoginRequest;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
-import com.example.tribalassistent.data.model.authentication.CharacterSelection;
-import com.example.tribalassistent.data.model.authentication.LogInUser;
 import com.example.tribalassistent.data.model.authentication.Player;
 
 public class LoginRepository {
@@ -48,13 +46,21 @@ public class LoginRepository {
     }
 
     public void login(String username, String password) {
-        SocketRequest<LogInUser, Player> request = new SocketRequest<>(onLogin);
-        request.doInBackground(new LogInUser(username, password), EventType.AUTH_LOGIN);
+        LoginRequest loginRequest = new LoginRequest(username, password);
+        loginRequest.onResultListener(result -> {
+            onLogin.onResult(result);
+            try {
+                user = result.getData();
+            } catch (NoSuchFieldException ignored) {
+            }
+        });
+        loginRequest.doInBackground();
     }
 
     public void select(int id, String world_id) {
-        SocketRequest<CharacterSelection, CharacterSelected> request = new SocketRequest<>(onCharacterSelected);
-        request.doInBackground(new CharacterSelection(id, world_id), EventType.AUTH_SELECT_CHARACTER);
+        CharacterSelectRequest selectRequest = new CharacterSelectRequest(id, world_id);
+        selectRequest.onResultListener(onCharacterSelected);
+        selectRequest.doInBackground();
     }
 
     public void setOnLogin(OnResultListener<Player> onLogin) {

@@ -55,7 +55,7 @@ public class HomeListAdapter extends ArrayAdapter<String> {
             public void onClick(View v) {
                 Log.d(TAG, "Building " + buildingName + " was added to " + villageId + " queue.");
                 Toast.makeText(mContext, ADDED, Toast.LENGTH_SHORT).show();
-                Manager.getInstance().getQueue(villageId).add(buildingName);
+                Manager.getInstance().add(villageId, buildingName);
             }
         });
         return convertView;

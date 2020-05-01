@@ -31,13 +31,13 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-        mContext = getActivity();
+        mContext = requireActivity();
         gridView = view.findViewById(R.id.building_grid_view);
         return view;
     }
 
     public void update(VillageData villageData) {
-        Log.d(TAG, "Village data updating... ");
+        Log.d(TAG, "Data updating... ");
         if (listAdapter == null) {
             setupGridView(villageData);
         } else {

@@ -1,10 +1,8 @@
 package com.example.tribalassistent.data.comunication;
 
-public interface Subject {
+public interface Subject<T> {
 
-    void registerObserver(Observer observer);
+    void observe(Observer<T> observer);
 
-    Object getEvent(EventType eventType);
-
-    void notifyObservers();
+    void notifyObservers(T event);
 }

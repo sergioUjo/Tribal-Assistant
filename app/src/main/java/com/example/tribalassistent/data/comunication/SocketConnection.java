@@ -2,11 +2,11 @@ package com.example.tribalassistent.data.comunication;
 
 import android.util.Log;
 
+import com.example.tribalassistent.data.comunication.request.SocketRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 
 import io.socket.client.IO;
@@ -29,7 +29,6 @@ public class SocketConnection {
             mSocket.on("ping", onPing);
             mSocket.on("pong", onPong);
             mSocket.connect();
-
         } catch (URISyntaxException e) {
             throw new RuntimeException(e);
         }
@@ -41,13 +40,10 @@ public class SocketConnection {
         public void call(Object... args) {
             JSONObject jsonObject = (JSONObject) args[0];
             Log.d(TAG, "Receiving: " + jsonObject);
-            EventMsg eventMsg = getEventMsg(jsonObject);
-            if (eventMsg != null) {
-                if (eventMsg.getId() != null) {
-                    SocketRequest.received(eventMsg);
-                } else {
-                    SocketNotification.received(eventMsg);
-                }
+            if (jsonObject.has("id")) {
+                SocketRequest.received(jsonObject);
+            } else {
+                //SocketNotification.received(eventMsg);
             }
         }
     };
@@ -62,13 +58,13 @@ public class SocketConnection {
     private static Emitter.Listener onPing = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            System.out.println("PING");
+            Log.i(TAG, "PING");
         }
     };
     private static Emitter.Listener onPong = new Emitter.Listener() {
         @Override
         public void call(Object... args) {
-            System.out.println("PONG");
+            Log.i(TAG, "PONG");
         }
     };
 
@@ -77,26 +73,6 @@ public class SocketConnection {
         try {
             return new JSONObject(MAPPER.writeValueAsString(eventMsg));
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    private static EventMsg getEventMsg(JSONObject jsonObject) {
-        String type = jsonObject.optString("type");
-        EventType eventType = EventType.fromString(type);
-        if (eventType == null) {
-            Log.d(TAG, type + " not mapped.");
-            return null;
-        }
-        Class clazz = eventType.getClazz();
-        return getEventMsg(clazz, jsonObject);
-    }
-
-    private static <T> EventMsg<T> getEventMsg(Class<T> clazz, JSONObject jsonObject) {
-        try {
-            return MAPPER.readValue(jsonObject.toString(), MAPPER.getTypeFactory().constructParametricType(EventMsg.class, clazz));
-        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;

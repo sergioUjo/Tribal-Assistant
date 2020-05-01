@@ -5,18 +5,19 @@ import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tribalassistent.R;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
-import com.example.tribalassistent.data.repositories.VillageRepository;
 import com.google.android.material.tabs.TabLayout;
 
-public class VillageActivity extends AppCompatActivity implements Observer<VillageGameBatch> {
+public class VillageActivity extends AppCompatActivity {
     private static final String TAG = "VillageActivity";
     private HomeFragment homeFragment;
     private QueueFragment queueFragment;
     private int villageId;
+    private VillageViewModel villageViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,15 +25,25 @@ public class VillageActivity extends AppCompatActivity implements Observer<Villa
         Log.d(TAG, "Village activity starting.. ");
         villageId = getIntent().getExtras().getInt("village");
         setContentView(R.layout.activity_village);
-        VillageRepository.getInstance().getVillageData().observe(this, this);
         setupViewPager();
+
+
+        villageViewModel = ViewModelProviders.of(this).get(VillageViewModel.class);
+
+        villageViewModel.getVillageGameBatch().observe(this, new Observer<VillageGameBatch>() {
+            @Override
+            public void onChanged(VillageGameBatch villageGameBatch) {
+                homeFragment.update(villageGameBatch.get(villageId));
+            }
+        });
+
     }
 
 
     private void setupViewPager() {
         SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
         homeFragment = new HomeFragment();
-        queueFragment = new QueueFragment(villageId);
+        queueFragment = new QueueFragment();
         adapter.add(homeFragment);
         adapter.add(queueFragment);
         ViewPager viewPager = findViewById(R.id.container);
@@ -44,12 +55,4 @@ public class VillageActivity extends AppCompatActivity implements Observer<Villa
         tabLayout.getTabAt(1).setIcon(R.drawable.ic_queue);
     }
 
-    public Integer getVillageId() {
-        return villageId;
-    }
-
-    @Override
-    public void onChanged(VillageGameBatch villageGameBatch) {
-        homeFragment.update(villageGameBatch.get(villageId));
-    }
 }

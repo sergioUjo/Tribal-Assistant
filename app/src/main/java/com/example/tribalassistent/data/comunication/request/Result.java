@@ -1,4 +1,4 @@
-package com.example.tribalassistent.data.comunication;
+package com.example.tribalassistent.data.comunication.request;
 
 import com.example.tribalassistent.data.model.system.Error;
 

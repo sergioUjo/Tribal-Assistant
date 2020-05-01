@@ -41,7 +41,7 @@ public class QueueListAdapter extends ArrayAdapter<String> {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Manager.getInstance().getQueue(villageId).remove(position);
+                Manager.getInstance().remove(villageId, position);
             }
         });
         TextView textView = convertView.findViewById(R.id.textView);

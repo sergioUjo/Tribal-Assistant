@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
 import com.example.tribalassistent.data.comunication.OnResultListener;
-import com.example.tribalassistent.data.comunication.Result;
+import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.model.authentication.Character;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
@@ -48,7 +48,7 @@ public class CharacterListAdapter extends ArrayAdapter<Character> {
                 LOGIN.setOnCharacterSelected(new OnResultListener<CharacterSelected>() {
                     @Override
                     public void onResult(Result<CharacterSelected> result) {
-                        CharacterRepository.getInstance().getCharacterInfo();
+                        CharacterRepository.getInstance().requestCharacterInfo();
                     }
                 });
                 LOGIN.select(character.getCharacter_id(), character.getWorld_id());

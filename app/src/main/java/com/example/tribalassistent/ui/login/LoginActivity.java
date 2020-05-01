@@ -14,7 +14,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.comunication.Result;
+import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.model.authentication.Player;
 import com.example.tribalassistent.data.repositories.SystemRepository;
 import com.example.tribalassistent.ui.character.CharacterActivity;
@@ -42,8 +42,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             @Override
             public void onChanged(Result<Player> playerResult) {
                 try {
-                    Player player = playerResult.getData();
-                    loginViewModel.setLoggedIn(player);
+                    playerResult.getData();
+                    SystemRepository.getInstance().systemIdentify();
                     openCharacterActivity();
                 } catch (NoSuchFieldException e) {
                     Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();

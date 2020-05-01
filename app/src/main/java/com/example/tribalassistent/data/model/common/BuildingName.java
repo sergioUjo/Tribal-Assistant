@@ -1,5 +1,8 @@
 package com.example.tribalassistent.data.model.common;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -19,9 +22,19 @@ public enum BuildingName {
     MARKET("market"),
     ACADEMY("academy"),
     PRECEPTORY("preceptory");
+
     private final String name;
 
     public String getName() {
         return name;
     }
+
+    public static List<String> getNames() {
+        List<String> list = new ArrayList<>();
+        for (BuildingName building : BuildingName.values()) {
+            list.add(building.getName());
+        }
+        return list;
+    }
+
 }

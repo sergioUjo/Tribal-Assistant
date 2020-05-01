@@ -2,6 +2,7 @@ package com.example.tribalassistent.ui.village;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,45 +11,50 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.Service.building.Manager;
 import com.example.tribalassistent.Service.building.Queue;
-import com.example.tribalassistent.data.comunication.Observer;
-import com.example.tribalassistent.data.comunication.Subject;
+
+import java.util.Map;
 
 
-public class QueueFragment extends Fragment implements Observer {
+public class QueueFragment extends Fragment {
     private static final String TAG = "QueueFragment";
-    private int villageId;
+    private VillageViewModel villageViewModel;
     private Context mContext;
-    private Queue queue;
+    private ListView listView;
     private QueueListAdapter listAdapter;
 
-
-    public QueueFragment(int villageId) {
-        super();
-        this.villageId = villageId;
-        queue = Manager.getInstance().getQueue(villageId);
-        queue.registerObserver(this);
-    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_queue, container, false);
-        this.mContext = getActivity();
-        setupListView((ListView) view.findViewById(R.id.building_queue));
+        mContext = requireActivity();
+        listView = view.findViewById(R.id.building_queue);
+
+        villageViewModel = ViewModelProviders.of(requireActivity()).get(VillageViewModel.class);
+        villageViewModel.getQueues().observe(requireActivity(), new Observer<Map<Integer, Queue>>() {
+            @Override
+            public void onChanged(Map<Integer, Queue> queues) {
+                update(queues.get(69));
+            }
+        });
         return view;
     }
 
-    private void setupListView(ListView listView) {
-        listAdapter = new QueueListAdapter(mContext, R.layout.layout_world_selection, queue, villageId);
+    private void setupListView(Queue queue) {
+        listAdapter = new QueueListAdapter(mContext, R.layout.layout_world_selection, queue, queue.getVillageId());
         listView.setAdapter(listAdapter);
     }
 
-    @Override
-    public void update(Subject observable) {
+    public void update(Queue queue) {
+        Log.d(TAG, "Data updating... ");
+        if (listAdapter == null) {
+            setupListView(queue);
+        }
         listAdapter.notifyDataSetChanged();
     }
 }

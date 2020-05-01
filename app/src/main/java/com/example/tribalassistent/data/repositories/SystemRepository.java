@@ -2,23 +2,18 @@ package com.example.tribalassistent.data.repositories;
 
 import android.util.Log;
 
-import com.example.tribalassistent.data.comunication.EventType;
+import com.example.tribalassistent.data.comunication.EventMsg;
 import com.example.tribalassistent.data.comunication.Observer;
-import com.example.tribalassistent.data.comunication.OnResultListener;
-import com.example.tribalassistent.data.comunication.Result;
 import com.example.tribalassistent.data.comunication.SocketConnection;
 import com.example.tribalassistent.data.comunication.SocketNotification;
-import com.example.tribalassistent.data.comunication.SocketRequest;
-import com.example.tribalassistent.data.comunication.Subject;
-import com.example.tribalassistent.data.model.system.Identified;
-import com.example.tribalassistent.data.model.system.Identify;
+import com.example.tribalassistent.data.comunication.request.SystemIdentifyRequest;
 
-public class SystemRepository implements Observer {
+public class SystemRepository implements Observer<EventMsg> {
     private static final String TAG = "SystemRepository";
     private static SystemRepository instance;
 
     private SystemRepository() {
-        SocketNotification.getInstance().registerObserver(this);
+        SocketNotification.getInstance().observe(this);
     }
 
     public static SystemRepository getInstance() {
@@ -30,17 +25,13 @@ public class SystemRepository implements Observer {
     }
 
     @Override
-    public void update(Subject observable) {
+    public void update(EventMsg eventMsg) {
         Log.d(TAG, "Updating... ");
         //systemWelcome(observable.getEvent(EventType.SYSTEM_WELCOME));
     }
 
     public void systemIdentify() {
-        SocketRequest<Identify, Identified> request = new SocketRequest<>(new OnResultListener<Identified>() {
-            @Override
-            public void onResult(Result<Identified> result) {
-            }
-        });
-        request.doInBackground(new Identify(), EventType.SYSTEM_IDENTIFY);
+        SystemIdentifyRequest request = new SystemIdentifyRequest();
+        request.doInBackground();
     }
 }
