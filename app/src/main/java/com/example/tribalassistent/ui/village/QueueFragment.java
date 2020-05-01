@@ -11,22 +11,22 @@ import android.widget.ListView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
 import com.example.tribalassistent.Service.building.Queue;
 
-import java.util.Map;
-
 
 public class QueueFragment extends Fragment {
     private static final String TAG = "QueueFragment";
-    private VillageViewModel villageViewModel;
+    private int village_id;
     private Context mContext;
     private ListView listView;
     private QueueListAdapter listAdapter;
 
+    public QueueFragment(int village_id) {
+        this.village_id = village_id;
+    }
 
     @Nullable
     @Override
@@ -34,19 +34,13 @@ public class QueueFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_queue, container, false);
         mContext = requireActivity();
         listView = view.findViewById(R.id.building_queue);
-
-        villageViewModel = ViewModelProviders.of(requireActivity()).get(VillageViewModel.class);
-        villageViewModel.getQueues().observe(requireActivity(), new Observer<Map<Integer, Queue>>() {
-            @Override
-            public void onChanged(Map<Integer, Queue> queues) {
-                update(queues.get(69));
-            }
-        });
+        VillageViewModel villageViewModel = ViewModelProviders.of(requireActivity()).get(VillageViewModel.class);
+        villageViewModel.getQueues().observe(requireActivity(), queues -> update(queues.get(village_id)));
         return view;
     }
 
     private void setupListView(Queue queue) {
-        listAdapter = new QueueListAdapter(mContext, R.layout.layout_world_selection, queue, queue.getVillageId());
+        listAdapter = new QueueListAdapter(mContext, R.layout.layout_world_selection, queue, village_id);
         listView.setAdapter(listAdapter);
     }
 

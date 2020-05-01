@@ -1,10 +1,8 @@
 package com.example.tribalassistent.data.repositories;
 
-import android.util.Log;
-
-import com.example.tribalassistent.data.comunication.OnResultListener;
 import com.example.tribalassistent.data.comunication.request.CharacterSelectRequest;
 import com.example.tribalassistent.data.comunication.request.LoginRequest;
+import com.example.tribalassistent.data.comunication.request.OnResultListener;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
 import com.example.tribalassistent.data.model.authentication.Player;
 
@@ -37,12 +35,6 @@ public class LoginRepository {
 
     public Player getUser() {
         return user;
-    }
-
-    public void setLoggedInUser(Player user) {
-        Log.d(TAG, "Logging in with user " + user.getName());
-        this.user = user;
-        SystemRepository.getInstance().systemIdentify();
     }
 
     public void login(String username, String password) {

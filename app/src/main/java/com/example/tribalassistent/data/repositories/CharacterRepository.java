@@ -38,7 +38,13 @@ public class CharacterRepository {
 
     public void requestCharacterInfo() {
         CharacterInfoRequest infoRequest = new CharacterInfoRequest();
-        infoRequest.onResultListener(result -> info.postValue(result.getData()));
+        infoRequest.onResultListener(result -> {
+            try {
+                info.postValue(result.getData());
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        });
         infoRequest.doInBackground();
     }
 

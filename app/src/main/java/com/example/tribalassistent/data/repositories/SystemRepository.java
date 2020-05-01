@@ -3,9 +3,8 @@ package com.example.tribalassistent.data.repositories;
 import android.util.Log;
 
 import com.example.tribalassistent.data.comunication.EventMsg;
-import com.example.tribalassistent.data.comunication.Observer;
 import com.example.tribalassistent.data.comunication.SocketConnection;
-import com.example.tribalassistent.data.comunication.SocketNotification;
+import com.example.tribalassistent.data.comunication.notification.SocketNotification;
 import com.example.tribalassistent.data.comunication.request.SystemIdentifyRequest;
 
 public class SystemRepository implements Observer<EventMsg> {

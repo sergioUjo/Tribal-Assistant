@@ -35,16 +35,15 @@ public class SocketConnection {
 
     }
 
-    private static Emitter.Listener onMsg = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            JSONObject jsonObject = (JSONObject) args[0];
-            Log.d(TAG, "Receiving: " + jsonObject);
-            if (jsonObject.has("id")) {
-                SocketRequest.received(jsonObject);
-            } else {
-                //SocketNotification.received(eventMsg);
-            }
+    private static Emitter.Listener onMsg = args -> {
+        JSONObject jsonObject = (JSONObject) args[0];
+
+        if (jsonObject.isNull("id")) {
+            Log.d(TAG, "Receiving notification: " + jsonObject);
+            //SocketNotification.received(eventMsg);
+        } else {
+            Log.d(TAG, "Receiving reponse: " + jsonObject);
+            SocketRequest.received(jsonObject);
         }
     };
 
@@ -55,18 +54,8 @@ public class SocketConnection {
     }
 
 
-    private static Emitter.Listener onPing = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.i(TAG, "PING");
-        }
-    };
-    private static Emitter.Listener onPong = new Emitter.Listener() {
-        @Override
-        public void call(Object... args) {
-            Log.i(TAG, "PONG");
-        }
-    };
+    private static Emitter.Listener onPing = args -> Log.i(TAG, "PING");
+    private static Emitter.Listener onPong = args -> Log.i(TAG, "PONG");
 
 
     private static JSONObject getJSON(EventMsg eventMsg) {

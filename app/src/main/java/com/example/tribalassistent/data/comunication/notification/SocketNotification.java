@@ -1,6 +1,10 @@
-package com.example.tribalassistent.data.comunication;
+package com.example.tribalassistent.data.comunication.notification;
 
 import android.util.Log;
+
+import com.example.tribalassistent.data.comunication.EventMsg;
+import com.example.tribalassistent.data.repositories.Observer;
+import com.example.tribalassistent.data.repositories.Subject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +23,7 @@ public class SocketNotification implements Subject<EventMsg> {
 
     static void received(EventMsg eventMsg) {
         Log.d(TAG, "Received " + eventMsg.getType());
-        getInstance().notifyObservers(eventMsg);
+        //getInstance().notifyObservers(eventMsg);
     }
 
     @Override
@@ -27,10 +31,11 @@ public class SocketNotification implements Subject<EventMsg> {
         observers.add(observer);
     }
 
+
     @Override
-    public void notifyObservers(EventMsg eventMsg) {
+    public void notifyObservers() {
         for (Observer observer : observers) {
-            observer.update(eventMsg);
+            // observer.update(eventMsg);
         }
     }
 }

@@ -38,12 +38,7 @@ public class QueueListAdapter extends ArrayAdapter<String> {
 
         Button button = convertView.findViewById(R.id.buttonPanel);
         button.setText("Cancel");
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Manager.getInstance().remove(villageId, position);
-            }
-        });
+        button.setOnClickListener(v -> Manager.getInstance().remove(villageId, position));
         TextView textView = convertView.findViewById(R.id.textView);
         textView.setText(buildingName);
         return convertView;

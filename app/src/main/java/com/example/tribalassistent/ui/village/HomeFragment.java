@@ -11,6 +11,7 @@ import android.widget.GridView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
 import com.example.tribalassistent.data.model.village.Building;
@@ -22,10 +23,15 @@ import java.util.Map;
 
 public class HomeFragment extends Fragment {
     private static final String TAG = "HomeFragment";
+    private int village_id;
     private Context mContext;
     private HomeListAdapter listAdapter;
     private GridView gridView;
 
+
+    public HomeFragment(int village_id) {
+        this.village_id = village_id;
+    }
 
     @Nullable
     @Override
@@ -33,6 +39,8 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         mContext = requireActivity();
         gridView = view.findViewById(R.id.building_grid_view);
+        VillageViewModel villageViewModel = ViewModelProviders.of(requireActivity()).get(VillageViewModel.class);
+        villageViewModel.getVillageGameBatch().observe(requireActivity(), villageGameBatch -> update(villageGameBatch.get(village_id)));
         return view;
     }
 

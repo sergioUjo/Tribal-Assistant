@@ -1,6 +1,6 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.OnResultListener;
+import com.example.tribalassistent.data.comunication.request.OnResultListener;
 import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.model.common.Resources;
 import com.example.tribalassistent.data.model.gamedata.GameData;

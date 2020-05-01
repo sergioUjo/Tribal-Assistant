@@ -50,13 +50,10 @@ public class HomeListAdapter extends ArrayAdapter<String> {
 
         nameTextView.setText(buildingName);
         levelTextView.setText(buildings.get(buildingName).getLevel().toString());
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.d(TAG, "Building " + buildingName + " was added to " + villageId + " queue.");
-                Toast.makeText(mContext, ADDED, Toast.LENGTH_SHORT).show();
-                Manager.getInstance().add(villageId, buildingName);
-            }
+        button.setOnClickListener(v -> {
+            Log.d(TAG, "Building " + buildingName + " was added to " + villageId + " queue.");
+            Toast.makeText(mContext, ADDED, Toast.LENGTH_SHORT).show();
+            Manager.getInstance().add(villageId, buildingName);
         });
         return convertView;
     }

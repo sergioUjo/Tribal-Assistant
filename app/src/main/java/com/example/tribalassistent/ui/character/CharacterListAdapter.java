@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.comunication.OnResultListener;
+import com.example.tribalassistent.data.comunication.request.OnResultListener;
 import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.model.authentication.Character;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;

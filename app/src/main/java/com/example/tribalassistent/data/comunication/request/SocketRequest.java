@@ -2,7 +2,6 @@ package com.example.tribalassistent.data.comunication.request;
 
 import com.example.tribalassistent.data.comunication.EventMsg;
 import com.example.tribalassistent.data.comunication.JsonParser;
-import com.example.tribalassistent.data.comunication.OnResultListener;
 import com.example.tribalassistent.data.comunication.SocketConnection;
 import com.example.tribalassistent.data.model.system.Error;
 

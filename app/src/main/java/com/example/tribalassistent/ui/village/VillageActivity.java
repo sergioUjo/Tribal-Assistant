@@ -42,8 +42,8 @@ public class VillageActivity extends AppCompatActivity {
 
     private void setupViewPager() {
         SectionPagerAdapter adapter = new SectionPagerAdapter(getSupportFragmentManager());
-        homeFragment = new HomeFragment();
-        queueFragment = new QueueFragment();
+        homeFragment = new HomeFragment(villageId);
+        queueFragment = new QueueFragment(villageId);
         adapter.add(homeFragment);
         adapter.add(queueFragment);
         ViewPager viewPager = findViewById(R.id.container);

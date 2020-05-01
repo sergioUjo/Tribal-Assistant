@@ -3,7 +3,7 @@ package com.example.tribalassistent.ui.login;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.tribalassistent.data.comunication.OnResultListener;
+import com.example.tribalassistent.data.comunication.request.OnResultListener;
 import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.model.authentication.Player;
 import com.example.tribalassistent.data.repositories.LoginRepository;
