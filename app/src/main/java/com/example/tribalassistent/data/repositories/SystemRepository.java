@@ -1,18 +1,14 @@
 package com.example.tribalassistent.data.repositories;
 
-import android.util.Log;
-
-import com.example.tribalassistent.data.comunication.EventMsg;
 import com.example.tribalassistent.data.comunication.SocketConnection;
-import com.example.tribalassistent.data.comunication.notification.SocketNotification;
 import com.example.tribalassistent.data.comunication.request.SystemIdentifyRequest;
+import com.example.tribalassistent.data.model.system.Welcome;
 
-public class SystemRepository implements Observer<EventMsg> {
+public class SystemRepository {
     private static final String TAG = "SystemRepository";
     private static SystemRepository instance;
 
     private SystemRepository() {
-        SocketNotification.getInstance().observe(this);
     }
 
     public static SystemRepository getInstance() {
@@ -23,10 +19,9 @@ public class SystemRepository implements Observer<EventMsg> {
         return instance;
     }
 
-    @Override
-    public void update(EventMsg eventMsg) {
-        Log.d(TAG, "Updating... ");
-        //systemWelcome(observable.getEvent(EventType.SYSTEM_WELCOME));
+
+    public void systemWelcome(Welcome welcome) {
+
     }
 
     public void systemIdentify() {

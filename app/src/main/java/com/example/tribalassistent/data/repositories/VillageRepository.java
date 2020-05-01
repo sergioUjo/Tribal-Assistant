@@ -51,7 +51,7 @@ public class VillageRepository implements Subject<VillageGameBatch> {
         notifyObservers();
     }
 
-    private void levelChange(LevelChange remote) {
+    public void levelChange(LevelChange remote) {
         VillageData data = getVillageData(remote.getVillage_id());
         data.getBuildingQueue().getQueue().remove(0);
         Village local = data.getVillage();
@@ -59,7 +59,7 @@ public class VillageRepository implements Subject<VillageGameBatch> {
         Manager.getInstance().build(remote.getVillage_id());
     }
 
-    private void resourceChanged(Village remote) {
+    public void resourceChanged(Village remote) {
         Village local = getVillageData(remote.getVillageId()).getVillage();
         local.setBase_storage(remote.getBase_storage());
         local.setBuilding_queue_slots(remote.getBuilding_queue_slots());
