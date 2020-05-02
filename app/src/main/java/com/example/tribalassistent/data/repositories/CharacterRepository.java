@@ -1,8 +1,7 @@
 package com.example.tribalassistent.data.repositories;
 
-import androidx.lifecycle.MutableLiveData;
-
 import com.example.tribalassistent.data.comunication.request.CharacterInfoRequest;
+import com.example.tribalassistent.data.comunication.request.OnResultListener;
 import com.example.tribalassistent.data.model.character.CharacterInfo;
 import com.example.tribalassistent.data.model.character.Village;
 
@@ -11,10 +10,9 @@ import java.util.List;
 
 public class CharacterRepository {
     private static CharacterRepository instance;
-    private MutableLiveData<CharacterInfo> info;
+    private CharacterInfo info;
 
     private CharacterRepository() {
-        info = new MutableLiveData<>();
     }
 
     public static CharacterRepository getInstance() {
@@ -26,21 +24,18 @@ public class CharacterRepository {
 
     public List<Integer> getVillageIds() {
         List<Integer> ids = new LinkedList<>();
-        for (Village village : info.getValue().getVillages()) {
+        for (Village village : info.getVillages()) {
             ids.add(village.getId());
         }
         return ids;
     }
 
-    public MutableLiveData<CharacterInfo> getCharacterInfo() {
-        return info;
-    }
-
-    public void requestCharacterInfo() {
+    public void requestCharacterInfo(OnResultListener<CharacterInfo> onResultListener) {
         CharacterInfoRequest infoRequest = new CharacterInfoRequest();
         infoRequest.onResultListener(result -> {
             try {
-                info.postValue(result.getData());
+                info = result.getData();
+                onResultListener.onResult(info);
             } catch (NoSuchFieldException e) {
                 e.printStackTrace();
             }

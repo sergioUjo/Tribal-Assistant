@@ -17,4 +17,13 @@ public class JsonParser {
         }
         return null;
     }
+
+    public static <T> JSONObject toJSONObject(T object) {
+        try {
+            return new JSONObject(MAPPER.writeValueAsString(object));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

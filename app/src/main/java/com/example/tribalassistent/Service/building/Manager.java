@@ -23,7 +23,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Manager implements Runnable, OnResultListener<Upgrading>, Subject<Map<Integer, Queue>> {
+public class Manager implements Runnable, OnResultListener<Result<Upgrading>>, Subject<Map<Integer, Queue>> {
     private static final String TAG = "Manager";
     private static final int INITIAL_TIME = 60;
     private static final int DELAY = 3600;
@@ -76,12 +76,12 @@ public class Manager implements Runnable, OnResultListener<Upgrading>, Subject<M
     }
 
     public void build(Integer village_id) {
+        Log.d(TAG, village_id + " queue size " + VillageRepository.getInstance().getVillageData(village_id).getBuildingQueue().getQueue().size());
         if (VillageRepository.getInstance().getVillageData(village_id).getBuildingQueue().getQueue().size() < 2) {
             for (String building : queues.get(village_id)) {
                 build(village_id, building);
             }
         }
-
     }
 
     public void build(int village_id, String buildingName) {

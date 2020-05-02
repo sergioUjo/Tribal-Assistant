@@ -4,12 +4,10 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.google.android.material.tabs.TabLayout;
 
 public class VillageActivity extends AppCompatActivity {
@@ -30,12 +28,7 @@ public class VillageActivity extends AppCompatActivity {
 
         villageViewModel = ViewModelProviders.of(this).get(VillageViewModel.class);
 
-        villageViewModel.getVillageGameBatch().observe(this, new Observer<VillageGameBatch>() {
-            @Override
-            public void onChanged(VillageGameBatch villageGameBatch) {
-                homeFragment.update(villageGameBatch.get(villageId));
-            }
-        });
+        villageViewModel.getVillageGameBatch().observe(this, villageGameBatch -> homeFragment.update(villageGameBatch.get(villageId)));
 
     }
 

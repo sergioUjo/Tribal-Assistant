@@ -13,12 +13,13 @@ import java.util.Map;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
-abstract class SocketRequest<I, O> implements Runnable {
+public abstract class SocketRequest<I, O> implements Runnable {
+    private static SocketConnection socketConnection = SocketConnection.getInstance();
     private static Map<Integer, SocketRequest> pendingMessages = new HashMap<>();
-    private OnResultListener<O> resultListener;
+    private OnResultListener<Result<O>> resultListener;
     private EventMsg<I> request;
 
-    public void onResultListener(OnResultListener<O> resultListener) {
+    public void onResultListener(OnResultListener<Result<O>> resultListener) {
         this.resultListener = resultListener;
     }
 
@@ -35,7 +36,7 @@ abstract class SocketRequest<I, O> implements Runnable {
         if (resultListener != null) {
             pendingMessages.put(request.getId(), this);
         }
-        SocketConnection.sendDataToServer(request);
+        socketConnection.sendDataToServer(request);
     }
 
     private void onPostExecute(JSONObject jsonObject) {

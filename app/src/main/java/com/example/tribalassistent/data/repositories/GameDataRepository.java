@@ -25,7 +25,7 @@ public class GameDataRepository {
         if (instance == null) {
             instance = new GameDataRepository(resultListener);
         } else {
-            resultListener.onResult(new Result<>(instance));
+            //resultListener.onResult(new Result<>(instance));
         }
     }
 

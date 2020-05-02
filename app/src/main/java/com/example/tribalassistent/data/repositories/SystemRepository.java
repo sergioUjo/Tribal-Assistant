@@ -2,7 +2,6 @@ package com.example.tribalassistent.data.repositories;
 
 import android.util.Log;
 
-import com.example.tribalassistent.data.comunication.SocketConnection;
 import com.example.tribalassistent.data.comunication.request.ReconnectRequest;
 import com.example.tribalassistent.data.comunication.request.SystemIdentifyRequest;
 import com.example.tribalassistent.data.model.system.Welcome;
@@ -17,11 +16,18 @@ public class SystemRepository {
     public static SystemRepository getInstance() {
         if (instance == null) {
             instance = new SystemRepository();
-            SocketConnection.init();
         }
         return instance;
     }
 
+    // REQUEST
+
+    public void systemIdentify() {
+        SystemIdentifyRequest request = new SystemIdentifyRequest();
+        request.doInBackground();
+    }
+
+    // NOTIFICATION
 
     public void systemWelcome(Welcome welcome) {
         Log.d(TAG, welcome.getMessage());
@@ -32,8 +38,4 @@ public class SystemRepository {
         }
     }
 
-    public void systemIdentify() {
-        SystemIdentifyRequest request = new SystemIdentifyRequest();
-        request.doInBackground();
-    }
 }

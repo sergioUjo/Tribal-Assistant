@@ -1,6 +1,7 @@
 package com.example.tribalassistent.ui.character;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.comunication.request.OnResultListener;
-import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.model.authentication.Character;
-import com.example.tribalassistent.data.model.authentication.CharacterSelected;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
 import com.example.tribalassistent.data.repositories.LoginRepository;
+import com.example.tribalassistent.data.repositories.SecondVillageRepository;
+import com.example.tribalassistent.ui.village.VillageActivity;
 
 import java.util.List;
 
@@ -41,22 +41,23 @@ public class CharacterListAdapter extends ArrayAdapter<Character> {
         convertView = inflater.inflate(mResource, parent, false);
 
         TextView textView = convertView.findViewById(R.id.textView);
-        Button button = convertView.findViewById(R.id.buttonPanel);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LOGIN.setOnCharacterSelected(new OnResultListener<CharacterSelected>() {
-                    @Override
-                    public void onResult(Result<CharacterSelected> result) {
-                        CharacterRepository.getInstance().requestCharacterInfo();
-                    }
-                });
-                LOGIN.select(character.getCharacter_id(), character.getWorld_id());
-
-            }
-        });
         textView.setText(character.getWorld_name());
+        Button button = convertView.findViewById(R.id.buttonPanel);
+        button.setOnClickListener(v -> {
+            LOGIN.select(character.getCharacter_id(), character.getWorld_id(), result -> {
+                LOGIN.completeLogin();
+                SecondVillageRepository.getInstance().requestInfo();
+                CharacterRepository.getInstance().requestCharacterInfo(characterInfo -> openVillageActivity(characterInfo.getVillages().get(0).getId()));
+            });
+        });
+
         return convertView;
+    }
+
+    private void openVillageActivity(int villageId) {
+        Intent intent = new Intent(getContext(), VillageActivity.class);
+        intent.putExtra("village", villageId);
+        getContext().startActivity(intent);
     }
 
 
