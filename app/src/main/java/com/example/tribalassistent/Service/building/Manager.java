@@ -76,9 +76,12 @@ public class Manager implements Runnable, OnResultListener<Upgrading>, Subject<M
     }
 
     public void build(Integer village_id) {
-        for (String building : queues.get(village_id)) {
-            build(village_id, building);
+        if (VillageRepository.getInstance().getVillageData(village_id).getBuildingQueue().getQueue().size() < 2) {
+            for (String building : queues.get(village_id)) {
+                build(village_id, building);
+            }
         }
+
     }
 
     public void build(int village_id, String buildingName) {
@@ -100,7 +103,7 @@ public class Manager implements Runnable, OnResultListener<Upgrading>, Subject<M
     }
 
     private void completeInstantly(Job job, int village_id) {
-        int headQuarterLevel = VillageRepository.getInstance().getVillageData().get(village_id).getVillage().getBuildings().get(BuildingName.HEAD_QUARTER.getName()).getLevel();
+        int headQuarterLevel = VillageRepository.getInstance().getVillageData(village_id).getVillage().getBuildings().get(BuildingName.HEAD_QUARTER.getName()).getLevel();
         long now = new Date().getTime() / 1000;
         long delay = job.getTime_completed() - now - headQuarterLevel * 30;
         WORKER.schedule(() -> {

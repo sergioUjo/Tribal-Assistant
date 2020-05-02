@@ -28,7 +28,7 @@ public class Notification {
                 break;
             case BUILDING_LEVEL_CHANGED:
                 LevelChange levelChange = JsonParser.parseEvent(jsonObject, LevelChange.class).getData();
-                VillageRepository.getInstance().levelChange(levelChange);
+                VillageRepository.getInstance().levelChanged(levelChange);
                 break;
             case VILLAGE_RESOURCES_CHANGED:
                 Village village = JsonParser.parseEvent(jsonObject, Village.class).getData();
