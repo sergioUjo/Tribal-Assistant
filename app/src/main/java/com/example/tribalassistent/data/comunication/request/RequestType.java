@@ -8,7 +8,8 @@ public enum RequestType {
     GET_VILLAGE_DATA("VillageBatch/getVillageData"),
     BUILDING_UPGRADE("Building/upgrade"),
     CHARACTER_GET_INFO("Character/getInfo"),
-    AUTH_RECONNECT("Authentication/reconnect");
+    AUTH_RECONNECT("Authentication/reconnect"),
+    BUILDING_COMPLETE("Building/completeInstantly");
 
 
     private final String type;

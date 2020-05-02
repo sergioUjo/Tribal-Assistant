@@ -2,15 +2,19 @@ package com.example.tribalassistent.Service.building;
 
 import android.util.Log;
 
+import com.example.tribalassistent.data.comunication.request.CompleteRequest;
 import com.example.tribalassistent.data.comunication.request.OnResultListener;
 import com.example.tribalassistent.data.comunication.request.Result;
 import com.example.tribalassistent.data.comunication.request.UpgradeRequest;
+import com.example.tribalassistent.data.model.building.Job;
 import com.example.tribalassistent.data.model.building.Upgrading;
+import com.example.tribalassistent.data.model.common.BuildingName;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
 import com.example.tribalassistent.data.repositories.Observer;
 import com.example.tribalassistent.data.repositories.Subject;
 import com.example.tribalassistent.data.repositories.VillageRepository;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -89,9 +93,20 @@ public class Manager implements Runnable, OnResultListener<Upgrading>, Subject<M
             Upgrading upgrading = result.getData();
             remove(upgrading.getVillage_id(), upgrading.getJob().getBuilding());
             VillageRepository.getInstance().addJob(upgrading.getVillage_id(), upgrading.getJob());
+            completeInstantly(upgrading.getJob(), upgrading.getVillage_id());
         } catch (NoSuchFieldException e) {
             Log.d(TAG, e.getMessage());
         }
+    }
+
+    private void completeInstantly(Job job, int village_id) {
+        int headQuarterLevel = VillageRepository.getInstance().getVillageData().get(village_id).getVillage().getBuildings().get(BuildingName.HEAD_QUARTER.getName()).getLevel();
+        long now = new Date().getTime() / 1000;
+        long delay = job.getTime_completed() - now - headQuarterLevel * 30;
+        WORKER.schedule(() -> {
+            CompleteRequest request = new CompleteRequest(job.getId(), village_id);
+            request.doInBackground();
+        }, delay, TimeUnit.SECONDS);
     }
 
     @Override
