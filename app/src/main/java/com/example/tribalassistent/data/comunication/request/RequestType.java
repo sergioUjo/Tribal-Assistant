@@ -6,9 +6,9 @@ public enum RequestType {
     SYSTEM_IDENTIFY("System/identify"),
     GET_GAME_DATA("GameDataBatch/getGameData"),
     GET_VILLAGE_DATA("VillageBatch/getVillageData"),
-    CHARACTER_INFO("Character/Info"),
     BUILDING_UPGRADE("Building/upgrade"),
-    CHARACTER_GET_INFO("Character/getInfo");
+    CHARACTER_GET_INFO("Character/getInfo"),
+    AUTH_RECONNECT("Authentication/reconnect");
 
 
     private final String type;

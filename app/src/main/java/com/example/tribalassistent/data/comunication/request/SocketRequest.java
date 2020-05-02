@@ -13,7 +13,7 @@ import java.util.Map;
 
 import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 
-public abstract class SocketRequest<I, O> implements Runnable {
+abstract class SocketRequest<I, O> implements Runnable {
     private static Map<Integer, SocketRequest> pendingMessages = new HashMap<>();
     private OnResultListener<O> resultListener;
     private EventMsg<I> request;
@@ -22,7 +22,7 @@ public abstract class SocketRequest<I, O> implements Runnable {
         this.resultListener = resultListener;
     }
 
-    public SocketRequest(I data, RequestType requestType) {
+    SocketRequest(I data, RequestType requestType) {
         request = EventMsgFactory.getEvent(data, requestType);
     }
 

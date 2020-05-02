@@ -10,6 +10,7 @@ public class LoginRepository {
     private static final String TAG = "LoginRepository";
     private static LoginRepository instance;
     private Player user = null;
+    private CharacterSelected selected;
 
     private OnResultListener<Player> onLogin;
     private OnResultListener<CharacterSelected> onCharacterSelected;
@@ -37,6 +38,10 @@ public class LoginRepository {
         return user;
     }
 
+    public CharacterSelected getSelected() {
+        return selected;
+    }
+
     public void login(String username, String password) {
         LoginRequest loginRequest = new LoginRequest(username, password);
         loginRequest.onResultListener(result -> {
@@ -51,7 +56,14 @@ public class LoginRepository {
 
     public void select(int id, String world_id) {
         CharacterSelectRequest selectRequest = new CharacterSelectRequest(id, world_id);
-        selectRequest.onResultListener(onCharacterSelected);
+        selectRequest.onResultListener(result -> {
+            onCharacterSelected.onResult(result);
+            try {
+                selected = result.getData();
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+        });
         selectRequest.doInBackground();
     }
 
