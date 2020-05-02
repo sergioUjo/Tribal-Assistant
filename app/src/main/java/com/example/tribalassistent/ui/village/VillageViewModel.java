@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.tribalassistent.Service.building.Manager;
-import com.example.tribalassistent.Service.building.Queue;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.repositories.VillageRepository;
+import com.example.tribalassistent.service.building.Manager;
+import com.example.tribalassistent.service.building.Queue;
 
 import java.util.Map;
 

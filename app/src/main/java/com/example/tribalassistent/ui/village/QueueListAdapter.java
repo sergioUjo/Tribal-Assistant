@@ -12,7 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.Service.building.Manager;
+import com.example.tribalassistent.service.building.Manager;
 
 import java.util.List;
 

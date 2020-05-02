@@ -1,12 +1,12 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.Service.building.Manager;
 import com.example.tribalassistent.data.comunication.request.VillageGameBatchRequest;
 import com.example.tribalassistent.data.model.building.Job;
 import com.example.tribalassistent.data.model.village.LevelChange;
 import com.example.tribalassistent.data.model.village.Village;
 import com.example.tribalassistent.data.model.village.VillageData;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
+import com.example.tribalassistent.service.building.Manager;
 
 import java.util.ArrayList;
 import java.util.List;

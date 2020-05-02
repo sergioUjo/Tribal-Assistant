@@ -1,4 +1,4 @@
-package com.example.tribalassistent.Service.building;
+package com.example.tribalassistent.service.building;
 
 import androidx.annotation.NonNull;
 

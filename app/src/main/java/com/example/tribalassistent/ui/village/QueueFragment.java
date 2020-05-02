@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.Service.building.Queue;
+import com.example.tribalassistent.service.building.Queue;
 
 
 public class QueueFragment extends Fragment {
