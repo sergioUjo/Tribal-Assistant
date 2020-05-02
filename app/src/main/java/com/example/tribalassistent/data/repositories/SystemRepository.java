@@ -1,5 +1,7 @@
 package com.example.tribalassistent.data.repositories;
 
+import android.util.Log;
+
 import com.example.tribalassistent.data.comunication.SocketConnection;
 import com.example.tribalassistent.data.comunication.request.SystemIdentifyRequest;
 import com.example.tribalassistent.data.model.system.Welcome;
@@ -21,7 +23,7 @@ public class SystemRepository {
 
 
     public void systemWelcome(Welcome welcome) {
-
+        Log.d(TAG, welcome.getMessage());
     }
 
     public void systemIdentify() {

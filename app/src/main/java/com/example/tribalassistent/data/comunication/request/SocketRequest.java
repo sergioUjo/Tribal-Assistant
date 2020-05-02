@@ -1,6 +1,7 @@
 package com.example.tribalassistent.data.comunication.request;
 
 import com.example.tribalassistent.data.comunication.EventMsg;
+import com.example.tribalassistent.data.comunication.EventMsgFactory;
 import com.example.tribalassistent.data.comunication.JsonParser;
 import com.example.tribalassistent.data.comunication.SocketConnection;
 import com.example.tribalassistent.data.model.system.Error;
@@ -15,9 +16,14 @@ import static android.os.AsyncTask.THREAD_POOL_EXECUTOR;
 public abstract class SocketRequest<I, O> implements Runnable {
     private static Map<Integer, SocketRequest> pendingMessages = new HashMap<>();
     private OnResultListener<O> resultListener;
+    private EventMsg<I> request;
 
     public void onResultListener(OnResultListener<O> resultListener) {
         this.resultListener = resultListener;
+    }
+
+    public SocketRequest(I data, RequestType requestType) {
+        request = EventMsgFactory.getEvent(data, requestType);
     }
 
     public void doInBackground() {
@@ -27,9 +33,9 @@ public abstract class SocketRequest<I, O> implements Runnable {
     @Override
     public void run() {
         if (resultListener != null) {
-            pendingMessages.put(getRequest().getId(), this);
+            pendingMessages.put(request.getId(), this);
         }
-        SocketConnection.sendDataToServer(getRequest());
+        SocketConnection.sendDataToServer(request);
     }
 
     private void onPostExecute(JSONObject jsonObject) {
@@ -44,14 +50,12 @@ public abstract class SocketRequest<I, O> implements Runnable {
     }
 
     public static void received(JSONObject jsonObject) {
-        SocketRequest socketRequest = pendingMessages.get(jsonObject.optInt("id"));
+        SocketRequest socketRequest = pendingMessages.remove(jsonObject.optInt("id"));
         if (socketRequest != null) {
             socketRequest.onPostExecute(jsonObject);
         }
     }
 
     abstract Class<O> getClazz();
-
-    abstract EventMsg<I> getRequest();
 
 }

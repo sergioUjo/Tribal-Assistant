@@ -57,6 +57,7 @@ public class VillageRepository implements Subject<VillageGameBatch> {
         Village local = data.getVillage();
         local.getBuildings().get(remote.getBuilding()).setLevel(remote.getLevel());
         Manager.getInstance().build(remote.getVillage_id());
+        notifyObservers();
     }
 
     public void resourceChanged(Village remote) {

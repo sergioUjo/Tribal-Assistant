@@ -12,11 +12,16 @@ import com.example.tribalassistent.data.repositories.VillageRepository;
 import org.json.JSONObject;
 
 public class Notification {
-    private static final String TAG = "NotificationFactory";
+    private static final String TAG = "Notification";
 
     public static void received(JSONObject jsonObject) {
         String type = jsonObject.optString("type", "");
-        switch (NotificationType.fromString(type)) {
+        NotificationType notificationType = NotificationType.fromString(type);
+        if (notificationType == null) {
+            Log.d(TAG, type + " not mapped");
+            return;
+        }
+        switch (notificationType) {
             case SYSTEM_WELCOME:
                 Welcome welcome = JsonParser.parseEvent(jsonObject, Welcome.class).getData();
                 SystemRepository.getInstance().systemWelcome(welcome);
@@ -28,9 +33,6 @@ public class Notification {
             case VILLAGE_RESOURCES_CHANGED:
                 Village village = JsonParser.parseEvent(jsonObject, Village.class).getData();
                 VillageRepository.getInstance().resourceChanged(village);
-                break;
-            default:
-                Log.d(TAG, type + " not mapped");
                 break;
         }
 

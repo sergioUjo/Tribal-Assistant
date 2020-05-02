@@ -23,6 +23,4 @@ public class Player {
     private boolean accepted_adjust;
     private boolean accepted_pixels;
     private boolean newsletter_window;
-
-
 }
