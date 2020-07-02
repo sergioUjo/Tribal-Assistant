@@ -14,8 +14,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
+import com.example.tribalassistent.client.service.building.Manager;
 import com.example.tribalassistent.data.model.village.Building;
-import com.example.tribalassistent.service.building.Manager;
 
 import java.util.List;
 import java.util.Map;

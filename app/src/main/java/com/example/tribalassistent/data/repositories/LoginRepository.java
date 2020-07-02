@@ -1,14 +1,18 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.request.CharacterSelectRequest;
-import com.example.tribalassistent.data.comunication.request.CompleteLoginRequest;
-import com.example.tribalassistent.data.comunication.request.LoginRequest;
-import com.example.tribalassistent.data.comunication.request.OnResultListener;
-import com.example.tribalassistent.data.comunication.request.Result;
+import com.example.tribalassistent.client.AsyncCallback;
+import com.example.tribalassistent.client.AuthServiceAsync;
+import com.example.tribalassistent.client.OnSuccess;
+import com.example.tribalassistent.data.comunication.request.RequestType;
+import com.example.tribalassistent.data.model.Requestable;
 import com.example.tribalassistent.data.model.authentication.CharacterSelected;
+import com.example.tribalassistent.data.model.authentication.CharacterSelection;
+import com.example.tribalassistent.data.model.authentication.LogInUser;
 import com.example.tribalassistent.data.model.authentication.Player;
+import com.example.tribalassistent.data.model.authentication.Reconnect;
+import com.example.tribalassistent.data.model.system.Error;
 
-public class LoginRepository {
+public class LoginRepository extends BaseRepository implements AuthServiceAsync {
     private static final String TAG = "LoginRepository";
     private static LoginRepository instance;
     private Player user = null;
@@ -41,33 +45,57 @@ public class LoginRepository {
         return selected;
     }
 
-    public void login(String username, String password, OnResultListener<Result<Player>> onResultListener) {
-        LoginRequest loginRequest = new LoginRequest(username, password);
-        loginRequest.onResultListener(result -> {
-            onResultListener.onResult(result);
-            try {
-                user = result.getData();
-            } catch (NoSuchFieldException ignored) {
+    @Override
+    public void login(String username, String password, AsyncCallback<Player> async) {
+        AsyncCallback<Player> callback = new AsyncCallback<Player>() {
+            @Override
+            public void onFailure(Error error) {
+                async.onFailure(error);
             }
-        });
-        loginRequest.doInBackground();
+
+            @Override
+            public void onSuccess(Player result) {
+                user = result;
+                async.onSuccess(result);
+            }
+        };
+        socketConnection.send(new LogInUser(username, password), callback);
+
     }
 
-    public void select(int id, String world_id, OnResultListener<CharacterSelected> onResultListener) {
-        CharacterSelectRequest selectRequest = new CharacterSelectRequest(id, world_id);
-        selectRequest.onResultListener(result -> {
-            try {
-                selected = result.getData();
-                onResultListener.onResult(selected);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-        });
-        selectRequest.doInBackground();
-    }
-
+    @Override
     public void completeLogin() {
-        CompleteLoginRequest request = new CompleteLoginRequest();
-        request.doInBackground();
+        socketConnection.send(new Requestable<Void>() {
+            @Override
+            public RequestType getType() {
+                return RequestType.AUTH_COMPLETE_LOGIN;
+            }
+
+            @Override
+            public Class<Void> getResponse() {
+                return Void.class;
+            }
+        });
+    }
+
+    @Override
+    public void selectCharacter(int id, String worldId, AsyncCallback<CharacterSelected> async) {
+        OnSuccess<CharacterSelected> callback = new OnSuccess<CharacterSelected>() {
+            @Override
+            public void onSuccess(CharacterSelected result) {
+                selected = result;
+                async.onSuccess(result);
+            }
+        };
+        socketConnection.send(new CharacterSelection(id, worldId), callback);
+    }
+
+    public void reconnect() {
+        reconnect(user, selected);
+    }
+
+    @Override
+    public void reconnect(Player player, CharacterSelected selected) {
+        socketConnection.send(new Reconnect(player.getName(), player.getToken(), player.getPlayer_id(), selected.getWorld_id()));
     }
 }

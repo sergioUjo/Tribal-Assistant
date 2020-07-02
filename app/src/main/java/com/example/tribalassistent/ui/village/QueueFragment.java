@@ -14,15 +14,21 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.service.building.Queue;
+import com.example.tribalassistent.client.service.building.Queue;
+import com.example.tribalassistent.data.model.building.Job;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class QueueFragment extends Fragment {
     private static final String TAG = "QueueFragment";
     private int village_id;
     private Context mContext;
-    private ListView listView;
-    private QueueListAdapter listAdapter;
+    private ListView waitingListView;
+    private ListView buildingListView;
+    private WaitingListAdapter waitAdapter;
+    private BuildingListAdapter buildAdapter;
 
     public QueueFragment(int village_id) {
         this.village_id = village_id;
@@ -33,23 +39,42 @@ public class QueueFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_queue, container, false);
         mContext = requireActivity();
-        listView = view.findViewById(R.id.building_queue);
+        waitingListView = view.findViewById(R.id.building_waiting);
+        buildingListView = view.findViewById(R.id.building_queue);
         VillageViewModel villageViewModel = ViewModelProviders.of(requireActivity()).get(VillageViewModel.class);
-        villageViewModel.getQueues().observe(requireActivity(), queues -> update(queues.get(village_id)));
+        villageViewModel.getQueues().observe(requireActivity(), queues -> updateWait(queues.get(village_id)));
+        villageViewModel.getVillageGameBatch().observe(requireActivity(), villageGameBatch -> updateBuild(villageGameBatch.get(village_id).getBuildingQueue().getQueue()));
         return view;
     }
 
-    private void setupListView(Queue queue) {
-        listAdapter = new QueueListAdapter(mContext, R.layout.layout_world_selection, queue, village_id);
-        listView.setAdapter(listAdapter);
+    private void setupWaitListView(Queue queue) {
+        waitAdapter = new WaitingListAdapter(mContext, R.layout.layout_world_selection, queue, village_id);
+        waitingListView.setAdapter(waitAdapter);
     }
 
-    public void update(Queue queue) {
+    public void updateWait(Queue queue) {
         Log.d(TAG, "Data updating... ");
-        if (listAdapter == null) {
-            setupListView(queue);
+        if (waitAdapter == null) {
+            setupWaitListView(queue);
         }
-        listAdapter.notifyDataSetChanged();
+        waitAdapter.notifyDataSetChanged();
+    }
+
+    private void setupBuildListView(List<Job> queue) {
+        List<String> jobs = new ArrayList<>();
+        for (Job job : queue) {
+            jobs.add(job.getBuilding());
+        }
+        buildAdapter = new BuildingListAdapter(mContext, R.layout.layout_world_selection, jobs);
+        buildingListView.setAdapter(buildAdapter);
+    }
+
+    public void updateBuild(List<Job> queue) {
+        Log.d(TAG, "Data updating... ");
+        if (buildAdapter == null) {
+            setupBuildListView(queue);
+        }
+        buildAdapter.notifyDataSetChanged();
     }
 }
 

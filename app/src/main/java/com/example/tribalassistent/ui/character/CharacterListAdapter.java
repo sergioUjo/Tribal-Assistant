@@ -13,7 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
+import com.example.tribalassistent.client.OnSuccess;
 import com.example.tribalassistent.data.model.authentication.Character;
+import com.example.tribalassistent.data.model.authentication.CharacterSelected;
+import com.example.tribalassistent.data.model.character.CharacterInfo;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
 import com.example.tribalassistent.data.repositories.LoginRepository;
 import com.example.tribalassistent.data.repositories.SecondVillageRepository;
@@ -43,14 +46,19 @@ public class CharacterListAdapter extends ArrayAdapter<Character> {
         TextView textView = convertView.findViewById(R.id.textView);
         textView.setText(character.getWorld_name());
         Button button = convertView.findViewById(R.id.buttonPanel);
-        button.setOnClickListener(v -> {
-            LOGIN.select(character.getCharacter_id(), character.getWorld_id(), result -> {
+        button.setOnClickListener(v -> LOGIN.selectCharacter(character.getCharacter_id(), character.getWorld_id(), new OnSuccess<CharacterSelected>() {
+            @Override
+            public void onSuccess(CharacterSelected result) {
                 LOGIN.completeLogin();
                 SecondVillageRepository.getInstance().requestInfo();
-                CharacterRepository.getInstance().requestCharacterInfo(characterInfo -> openVillageActivity(characterInfo.getVillages().get(0).getId()));
-            });
-        });
-
+                CharacterRepository.getInstance().getInfo(new OnSuccess<CharacterInfo>() {
+                    @Override
+                    public void onSuccess(CharacterInfo characterInfo) {
+                        openVillageActivity(characterInfo.getVillages().get(0).getId());
+                    }
+                });
+            }
+        }));
         return convertView;
     }
 

@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.data.model.authentication.Player;
+import com.example.tribalassistent.data.repositories.LoginRepository;
 import com.example.tribalassistent.ui.character.CharacterActivity;
 
 public class LoginActivity extends AppCompatActivity {
@@ -32,13 +32,10 @@ public class LoginActivity extends AppCompatActivity {
         loginButton.setOnClickListener(v -> loginViewModel.login(userName.getText().toString(), userPassword.getText().toString()));
 
 
-        loginViewModel.getLoginResult().observe(this, playerResult -> {
-            try {
-                Player player = playerResult.getData();
-                Toast.makeText(mContext, "Welcome " + player.getName(), Toast.LENGTH_SHORT).show();
+        loginViewModel.getLoginResult().observe(this, result -> {
+            Toast.makeText(mContext, result, Toast.LENGTH_SHORT).show();
+            if (LoginRepository.getInstance().isLoggedIn()) {
                 openCharacterActivity();
-            } catch (NoSuchFieldException e) {
-                Toast.makeText(mContext, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
     }

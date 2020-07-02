@@ -1,38 +1,39 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.request.VillageGameBatchRequest;
+import com.example.tribalassistent.client.AsyncCallback;
+import com.example.tribalassistent.client.BuilderServiceAsync;
+import com.example.tribalassistent.client.OnSuccess;
+import com.example.tribalassistent.client.VillageServiceAsync;
+import com.example.tribalassistent.client.service.building.Manager;
+import com.example.tribalassistent.data.model.building.Complete;
 import com.example.tribalassistent.data.model.building.Job;
+import com.example.tribalassistent.data.model.building.Upgrade;
+import com.example.tribalassistent.data.model.building.Upgrading;
 import com.example.tribalassistent.data.model.village.LevelChange;
 import com.example.tribalassistent.data.model.village.Village;
 import com.example.tribalassistent.data.model.village.VillageData;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
-import com.example.tribalassistent.service.building.Manager;
+import com.example.tribalassistent.data.model.village.VillageIds;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class VillageRepository implements Subject<VillageGameBatch> {
+public class VillageRepository extends BaseRepository implements BuilderServiceAsync, VillageServiceAsync {
     private static final String TAG = "VillageRepository";
     private static VillageRepository instance;
     private VillageGameBatch villageData;
-    private List<Observer<VillageGameBatch>> observers;
 
     public VillageGameBatch getVillageData() {
         return villageData;
     }
 
     private VillageRepository() {
-        VillageGameBatchRequest request = new VillageGameBatchRequest(CharacterRepository.getInstance().getVillageIds());
-        request.onResultListener(villageResult -> {
-            try {
-                villageData = villageResult.getData();
+        getVillageData(CharacterRepository.getInstance().getVillageIds(), new OnSuccess<VillageGameBatch>() {
+            @Override
+            public void onSuccess(VillageGameBatch result) {
+                villageData = result;
                 notifyObservers();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
             }
         });
-        request.doInBackground();
-        observers = new ArrayList<>();
     }
 
     public static VillageRepository getInstance() {
@@ -42,12 +43,16 @@ public class VillageRepository implements Subject<VillageGameBatch> {
         return instance;
     }
 
+    public List<Job> getBuildingQueue(int villageId) {
+        return getVillageData(villageId).getBuildingQueue().getQueue();
+    }
+
     public VillageData getVillageData(int villageId) {
         return villageData.get(villageId);
     }
 
     public void addJob(int village_id, Job job) {
-        getVillageData(village_id).getBuildingQueue().getQueue().add(job);
+        getBuildingQueue(village_id).add(job);
         notifyObservers();
     }
 
@@ -72,14 +77,23 @@ public class VillageRepository implements Subject<VillageGameBatch> {
     }
 
     @Override
-    public void observe(Observer<VillageGameBatch> observer) {
-        observers.add(observer);
+    public void notifyObservers() {
+        setChanged();
+        super.notifyObservers(villageData);
     }
 
     @Override
-    public void notifyObservers() {
-        for (Observer<VillageGameBatch> observer : observers) {
-            observer.update(villageData);
-        }
+    public void completeInstantly(int jobId, int villageId) {
+        socketConnection.send(new Complete(jobId, villageId));
+    }
+
+    @Override
+    public void upgrade(String buildingName, int villageId, AsyncCallback<Upgrading> async) {
+        socketConnection.send(new Upgrade(buildingName, villageId), async);
+    }
+
+    @Override
+    public void getVillageData(List<Integer> villageIds, AsyncCallback<VillageGameBatch> async) {
+        socketConnection.send(new VillageIds(villageIds), async);
     }
 }

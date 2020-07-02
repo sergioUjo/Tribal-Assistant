@@ -1,14 +1,11 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.request.OnResultListener;
-import com.example.tribalassistent.data.comunication.request.Result;
-import com.example.tribalassistent.data.model.common.Resources;
 import com.example.tribalassistent.data.model.gamedata.GameData;
 
 public class GameDataRepository {
     private static GameDataRepository instance;
     private GameData gameData;
-
+/*
     private GameDataRepository(final OnResultListener<GameDataRepository> resultListener) {/*
         final SocketRequest<Object, GameData> request = new SocketRequest<>(new OnResultListener<GameData>() {
             @Override
@@ -18,7 +15,7 @@ public class GameDataRepository {
             }
         });
         request.doInBackground(null, EventType.GET_GAME_DATA);
-        */
+
     }
 
     public static void getInstance(OnResultListener<GameDataRepository> resultListener) {
@@ -40,5 +37,5 @@ public class GameDataRepository {
             e.printStackTrace();
         }
     }
-
+*/
 }

@@ -1,6 +1,5 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.request.SecondVillageInfoRequest;
 import com.example.tribalassistent.data.model.secondvillage.Info;
 
 public class SecondVillageRepository {
@@ -18,14 +17,5 @@ public class SecondVillageRepository {
     }
 
     public void requestInfo() {
-        SecondVillageInfoRequest request = new SecondVillageInfoRequest();
-        request.onResultListener(result -> {
-            try {
-                villageInfo = result.getData();
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            }
-        });
-        request.doInBackground();
     }
 }

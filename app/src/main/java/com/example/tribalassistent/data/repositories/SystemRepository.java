@@ -2,11 +2,13 @@ package com.example.tribalassistent.data.repositories;
 
 import android.util.Log;
 
-import com.example.tribalassistent.data.comunication.request.ReconnectRequest;
-import com.example.tribalassistent.data.comunication.request.SystemIdentifyRequest;
+import com.example.tribalassistent.client.AsyncCallback;
+import com.example.tribalassistent.client.SystemServiceAsync;
+import com.example.tribalassistent.data.model.system.Identified;
+import com.example.tribalassistent.data.model.system.Identify;
 import com.example.tribalassistent.data.model.system.Welcome;
 
-public class SystemRepository {
+public class SystemRepository extends BaseRepository implements SystemServiceAsync {
     private static final String TAG = "SystemRepository";
     private static SystemRepository instance;
 
@@ -20,22 +22,17 @@ public class SystemRepository {
         return instance;
     }
 
-    // REQUEST
-
-    public void systemIdentify() {
-        SystemIdentifyRequest request = new SystemIdentifyRequest();
-        request.doInBackground();
-    }
-
-    // NOTIFICATION
-
     public void systemWelcome(Welcome welcome) {
         Log.d(TAG, welcome.getMessage());
         LoginRepository loginRepository = LoginRepository.getInstance();
         if (loginRepository.isLoggedIn()) {
-            ReconnectRequest request = new ReconnectRequest(loginRepository.getUser(), loginRepository.getSelected());
-            request.doInBackground();
+            loginRepository.reconnect();
+            identify(null);
         }
     }
 
+    @Override
+    public void identify(AsyncCallback<Identified> async) {
+        socketConnection.send(new Identify());
+    }
 }

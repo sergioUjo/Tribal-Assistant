@@ -4,10 +4,10 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.tribalassistent.client.service.building.Manager;
+import com.example.tribalassistent.client.service.building.Queue;
 import com.example.tribalassistent.data.model.village.VillageGameBatch;
 import com.example.tribalassistent.data.repositories.VillageRepository;
-import com.example.tribalassistent.service.building.Manager;
-import com.example.tribalassistent.service.building.Queue;
 
 import java.util.Map;
 
@@ -16,8 +16,8 @@ public class VillageViewModel extends ViewModel {
     private MutableLiveData<VillageGameBatch> villageGameBatch = new MutableLiveData<>();
 
     public VillageViewModel() {
-        VillageRepository.getInstance().observe(event -> villageGameBatch.postValue(event));
-        Manager.getInstance().observe(event -> queues.postValue(event));
+        VillageRepository.getInstance().addObserver((o, arg) -> villageGameBatch.postValue((VillageGameBatch) arg));
+        Manager.getInstance().addObserver((o, arg) -> queues.postValue((Map<Integer, Queue>) arg));
     }
 
     public MutableLiveData<Map<Integer, Queue>> getQueues() {

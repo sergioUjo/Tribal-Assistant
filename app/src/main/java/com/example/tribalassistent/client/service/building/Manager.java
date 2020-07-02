@@ -1,35 +1,28 @@
-package com.example.tribalassistent.service.building;
+package com.example.tribalassistent.client.service.building;
 
 import android.util.Log;
 
-import com.example.tribalassistent.data.comunication.request.CompleteRequest;
-import com.example.tribalassistent.data.comunication.request.OnResultListener;
-import com.example.tribalassistent.data.comunication.request.Result;
-import com.example.tribalassistent.data.comunication.request.UpgradeRequest;
+import com.example.tribalassistent.client.OnSuccess;
 import com.example.tribalassistent.data.model.building.Job;
 import com.example.tribalassistent.data.model.building.Upgrading;
 import com.example.tribalassistent.data.model.common.BuildingName;
 import com.example.tribalassistent.data.repositories.CharacterRepository;
-import com.example.tribalassistent.data.repositories.Observer;
-import com.example.tribalassistent.data.repositories.Subject;
 import com.example.tribalassistent.data.repositories.VillageRepository;
 
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.Observable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Manager implements Runnable, OnResultListener<Result<Upgrading>>, Subject<Map<Integer, Queue>> {
+public class Manager extends Observable implements Runnable {
     private static final String TAG = "Manager";
     private static final int INITIAL_TIME = 60;
     private static final int DELAY = 3600;
     private static final ScheduledExecutorService WORKER = Executors.newSingleThreadScheduledExecutor();
     private static Manager instance;
-    private List<Observer<Map<Integer, Queue>>> observers;
     private Map<Integer, Queue> queues;
 
     private Manager() {
@@ -37,7 +30,6 @@ public class Manager implements Runnable, OnResultListener<Result<Upgrading>>, S
         for (int villageId : CharacterRepository.getInstance().getVillageIds()) {
             queues.put(villageId, new Queue());
         }
-        observers = new LinkedList<>();
         WORKER.scheduleWithFixedDelay(this, INITIAL_TIME, DELAY, TimeUnit.SECONDS);
     }
 
@@ -75,52 +67,37 @@ public class Manager implements Runnable, OnResultListener<Result<Upgrading>>, S
         }
     }
 
-    public void build(Integer village_id) {
-        Log.d(TAG, village_id + " queue size " + VillageRepository.getInstance().getVillageData(village_id).getBuildingQueue().getQueue().size());
-        if (VillageRepository.getInstance().getVillageData(village_id).getBuildingQueue().getQueue().size() < 2) {
-            for (String building : queues.get(village_id)) {
-                build(village_id, building);
+    public void build(int villageId) {
+        Log.d(TAG, villageId + " queue size " + VillageRepository.getInstance().getBuildingQueue(villageId).size());
+        if (VillageRepository.getInstance().getBuildingQueue(villageId).size() < 2) {
+            for (String building : queues.get(villageId)) {
+                VillageRepository.getInstance().upgrade(building, villageId, new OnSuccess<Upgrading>() {
+                    @Override
+                    public void onSuccess(Upgrading result) {
+                        onUpgrading(result);
+                    }
+                });
             }
         }
     }
 
-    public void build(int village_id, String buildingName) {
-        UpgradeRequest request = new UpgradeRequest(buildingName, village_id);
-        request.onResultListener(this);
-        request.doInBackground();
-    }
 
-    @Override
-    public void onResult(Result<Upgrading> result) {
-        try {
-            Upgrading upgrading = result.getData();
-            remove(upgrading.getVillage_id(), upgrading.getJob().getBuilding());
-            VillageRepository.getInstance().addJob(upgrading.getVillage_id(), upgrading.getJob());
-            completeInstantly(upgrading.getJob(), upgrading.getVillage_id());
-        } catch (NoSuchFieldException e) {
-            Log.d(TAG, e.getMessage());
-        }
+    private void onUpgrading(Upgrading upgrading) {
+        remove(upgrading.getVillage_id(), upgrading.getJob().getBuilding());
+        VillageRepository.getInstance().addJob(upgrading.getVillage_id(), upgrading.getJob());
+        completeInstantly(upgrading.getJob(), upgrading.getVillage_id());
     }
 
     private void completeInstantly(Job job, int village_id) {
         int headQuarterLevel = VillageRepository.getInstance().getVillageData(village_id).getVillage().getBuildings().get(BuildingName.HEAD_QUARTER.getName()).getLevel();
         long now = new Date().getTime() / 1000;
         long delay = job.getTime_completed() - now - headQuarterLevel * 30;
-        WORKER.schedule(() -> {
-            CompleteRequest request = new CompleteRequest(job.getId(), village_id);
-            request.doInBackground();
-        }, delay, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void observe(Observer<Map<Integer, Queue>> observer) {
-        observers.add(observer);
+        WORKER.schedule(() -> VillageRepository.getInstance().completeInstantly(job.getId(), village_id), delay, TimeUnit.SECONDS);
     }
 
     @Override
     public void notifyObservers() {
-        for (Observer<Map<Integer, Queue>> observer : observers) {
-            observer.update(queues);
-        }
+        setChanged();
+        super.notifyObservers(queues);
     }
 }

@@ -12,16 +12,16 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.tribalassistent.R;
-import com.example.tribalassistent.service.building.Manager;
+import com.example.tribalassistent.client.service.building.Manager;
 
 import java.util.List;
 
-public class QueueListAdapter extends ArrayAdapter<String> {
+public class WaitingListAdapter extends ArrayAdapter<String> {
     private static final String TAG = "QueueListAdapter";
     private int villageId;
     private int mResource;
 
-    public QueueListAdapter(@NonNull Context context, int resource, @NonNull List<String> objects, int villageId) {
+    public WaitingListAdapter(@NonNull Context context, int resource, @NonNull List<String> objects, int villageId) {
         super(context, resource, objects);
         this.villageId = villageId;
         this.mResource = resource;
