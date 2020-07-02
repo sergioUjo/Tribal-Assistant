@@ -1,39 +1,38 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.EventType;
-import com.example.tribalassistent.data.comunication.MessagerSync;
-import com.example.tribalassistent.data.comunication.Observer;
-import com.example.tribalassistent.data.comunication.SocketConnection;
-import com.example.tribalassistent.data.comunication.Subject;
-import com.example.tribalassistent.data.model.system.Identify;
+import android.util.Log;
 
-public class SystemRepository implements Observer {
+import com.example.tribalassistent.client.AsyncCallback;
+import com.example.tribalassistent.client.SystemServiceAsync;
+import com.example.tribalassistent.data.model.system.Identified;
+import com.example.tribalassistent.data.model.system.Identify;
+import com.example.tribalassistent.data.model.system.Welcome;
+
+public class SystemRepository extends BaseRepository implements SystemServiceAsync {
+    private static final String TAG = "SystemRepository";
     private static SystemRepository instance;
 
     private SystemRepository() {
-        MessagerSync.getInstance().registerObserver(this);
     }
 
     public static SystemRepository getInstance() {
         if (instance == null) {
             instance = new SystemRepository();
-            SocketConnection.init();
         }
         return instance;
     }
 
-    @Override
-    public void update(Subject observable) {
-        systemWelcome(observable.getEvent(EventType.SYSTEM_WELCOME));
+    public void systemWelcome(Welcome welcome) {
+        Log.d(TAG, welcome.getMessage());
+        LoginRepository loginRepository = LoginRepository.getInstance();
+        if (loginRepository.isLoggedIn()) {
+            loginRepository.reconnect();
+            identify(null);
+        }
     }
 
-    private void systemWelcome(Object event) {
-        if (event != null) {
-            if (LoginRepository.getInstance().isLoggedIn()) {
-                //TODO send  token
-            } else {
-                MessagerSync.send(new Identify(), EventType.SYSTEM_IDENTIFY);
-            }
-        }
+    @Override
+    public void identify(AsyncCallback<Identified> async) {
+        socketConnection.send(new Identify());
     }
 }

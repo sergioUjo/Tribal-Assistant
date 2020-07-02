@@ -1,9 +1,6 @@
 package com.example.tribalassistent.data.model.village;
 
-import com.example.tribalassistent.data.model.building.Job;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.List;
 
 import lombok.Data;
 
@@ -29,7 +26,7 @@ public class VillageData {
     private Object ScoutingInfo;
 
     @JsonProperty("Building/queue")
-    private List<Job> queue;
+    private VillageQueue buildingQueue;
 
     @JsonProperty("Transport/list")
     private Object transport;

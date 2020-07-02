@@ -1,9 +1,12 @@
 package com.example.tribalassistent.data.model.building;
 
+import com.example.tribalassistent.client.service.connection.RequestType;
+import com.example.tribalassistent.data.model.Requestable;
+
 import lombok.Data;
 
 @Data
-public class Upgrade {
+public class Upgrade implements Requestable<Upgrading> {
     private String building;
     private Integer village_id;
     private String location;
@@ -14,5 +17,15 @@ public class Upgrade {
         village_id = villageId;
         location = "hq";
         premium = false;
+    }
+
+    @Override
+    public RequestType getType() {
+        return RequestType.BUILDING_UPGRADE;
+    }
+
+    @Override
+    public Class<Upgrading> getResponse() {
+        return Upgrading.class;
     }
 }

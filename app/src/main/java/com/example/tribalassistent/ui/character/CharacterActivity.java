@@ -15,12 +15,12 @@ public class CharacterActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_character);
+        ListView listView = findViewById(R.id.character_listview);
+
         Player user = LoginRepository.getInstance().getUser();
-        System.out.println(user.getName());
-        ListView listView = (ListView) findViewById(R.id.listView);
-        CharacterListAdapter listAdapter = new CharacterListAdapter(this, R.layout.world_selection, user.getCharacters());
+        CharacterListAdapter listAdapter = new CharacterListAdapter(this, R.layout.layout_world_selection, user.getCharacters());
         listView.setAdapter(listAdapter);
 
-
     }
+
 }

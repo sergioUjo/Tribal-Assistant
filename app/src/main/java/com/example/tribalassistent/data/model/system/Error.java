@@ -5,8 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public
-class Error {
+public class Error {
     private String cause;
     private String code;
     private List<String> details;

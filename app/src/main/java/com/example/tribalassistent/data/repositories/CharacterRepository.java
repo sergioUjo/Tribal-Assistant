@@ -1,20 +1,21 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.EventType;
-import com.example.tribalassistent.data.comunication.MessagerSync;
-import com.example.tribalassistent.data.comunication.Result;
+import com.example.tribalassistent.client.AsyncCallback;
+import com.example.tribalassistent.client.CharacterServiceAsync;
+import com.example.tribalassistent.client.OnSuccess;
+import com.example.tribalassistent.client.service.connection.RequestType;
+import com.example.tribalassistent.data.model.Requestable;
 import com.example.tribalassistent.data.model.character.CharacterInfo;
 import com.example.tribalassistent.data.model.character.Village;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class CharacterRepository {
+public class CharacterRepository extends BaseRepository implements CharacterServiceAsync {
     private static CharacterRepository instance;
     private CharacterInfo info;
 
     private CharacterRepository() {
-        info = requestInfo();
     }
 
     public static CharacterRepository getInstance() {
@@ -32,12 +33,26 @@ public class CharacterRepository {
         return ids;
     }
 
-    private CharacterInfo requestInfo() {
-        Result result = MessagerSync.send(null, EventType.CHARACTER_GET_INFO);
-        if (result instanceof Result.Error) {
-            System.out.println(((Result.Error) result).getError());
-            return null;
-        }
-        return ((Result.Success<CharacterInfo>) result).getData();
+    @Override
+    public void getInfo(AsyncCallback<CharacterInfo> async) {
+        OnSuccess<CharacterInfo> onSuccess = new OnSuccess<CharacterInfo>() {
+            @Override
+            public void onSuccess(CharacterInfo result) {
+                info = result;
+                async.onSuccess(result);
+            }
+        };
+        socketConnection.send(new Requestable<CharacterInfo>() {
+            @Override
+            public RequestType getType() {
+                return RequestType.CHARACTER_GET_INFO;
+            }
+
+            @Override
+            public Class<CharacterInfo> getResponse() {
+                return CharacterInfo.class;
+            }
+        }, onSuccess);
     }
 }
+
