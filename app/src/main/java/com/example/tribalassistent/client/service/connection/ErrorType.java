@@ -1,4 +1,4 @@
-package com.example.tribalassistent.data.comunication.request;
+package com.example.tribalassistent.client.service.connection;
 
 public enum ErrorType {
     SYSTEM_ERROR("System/error"),

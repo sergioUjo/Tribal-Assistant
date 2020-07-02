@@ -1,6 +1,6 @@
 package com.example.tribalassistent.data.repositories;
 
-import com.example.tribalassistent.data.comunication.request.SocketConnection;
+import com.example.tribalassistent.client.service.connection.SocketConnection;
 
 import java.util.Observable;
 

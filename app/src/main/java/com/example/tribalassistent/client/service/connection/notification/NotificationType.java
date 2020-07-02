@@ -1,4 +1,4 @@
-package com.example.tribalassistent.data.comunication.notification;
+package com.example.tribalassistent.client.service.connection.notification;
 
 enum NotificationType {
     SYSTEM_WELCOME("System/welcome"),

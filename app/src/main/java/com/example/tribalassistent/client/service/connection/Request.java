@@ -1,7 +1,7 @@
-package com.example.tribalassistent.data.comunication.request;
+package com.example.tribalassistent.client.service.connection;
 
 import com.example.tribalassistent.client.AsyncCallback;
-import com.example.tribalassistent.data.comunication.JsonParser;
+import com.example.tribalassistent.client.service.connection.util.JsonParser;
 import com.example.tribalassistent.data.model.Requestable;
 import com.example.tribalassistent.data.model.system.Error;
 

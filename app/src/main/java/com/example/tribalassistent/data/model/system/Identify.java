@@ -1,6 +1,6 @@
 package com.example.tribalassistent.data.model.system;
 
-import com.example.tribalassistent.data.comunication.request.RequestType;
+import com.example.tribalassistent.client.service.connection.RequestType;
 import com.example.tribalassistent.data.model.Requestable;
 
 import lombok.Data;

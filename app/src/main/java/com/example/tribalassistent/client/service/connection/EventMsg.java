@@ -1,4 +1,4 @@
-package com.example.tribalassistent.data.comunication;
+package com.example.tribalassistent.client.service.connection;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

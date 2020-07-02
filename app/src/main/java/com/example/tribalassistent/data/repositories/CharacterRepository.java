@@ -3,7 +3,7 @@ package com.example.tribalassistent.data.repositories;
 import com.example.tribalassistent.client.AsyncCallback;
 import com.example.tribalassistent.client.CharacterServiceAsync;
 import com.example.tribalassistent.client.OnSuccess;
-import com.example.tribalassistent.data.comunication.request.RequestType;
+import com.example.tribalassistent.client.service.connection.RequestType;
 import com.example.tribalassistent.data.model.Requestable;
 import com.example.tribalassistent.data.model.character.CharacterInfo;
 import com.example.tribalassistent.data.model.character.Village;

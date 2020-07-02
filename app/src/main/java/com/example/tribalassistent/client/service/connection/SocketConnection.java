@@ -1,12 +1,10 @@
-package com.example.tribalassistent.data.comunication.request;
+package com.example.tribalassistent.client.service.connection;
 
 import android.util.Log;
 
 import com.example.tribalassistent.client.AsyncCallback;
-import com.example.tribalassistent.data.comunication.EventMsg;
-import com.example.tribalassistent.data.comunication.EventMsgFactory;
-import com.example.tribalassistent.data.comunication.JsonParser;
-import com.example.tribalassistent.data.comunication.notification.Notification;
+import com.example.tribalassistent.client.service.connection.notification.Notification;
+import com.example.tribalassistent.client.service.connection.util.JsonParser;
 import com.example.tribalassistent.data.model.Requestable;
 
 import org.json.JSONObject;

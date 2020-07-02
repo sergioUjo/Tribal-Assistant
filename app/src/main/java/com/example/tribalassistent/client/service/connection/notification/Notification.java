@@ -1,8 +1,8 @@
-package com.example.tribalassistent.data.comunication.notification;
+package com.example.tribalassistent.client.service.connection.notification;
 
 import android.util.Log;
 
-import com.example.tribalassistent.data.comunication.JsonParser;
+import com.example.tribalassistent.client.service.connection.util.JsonParser;
 import com.example.tribalassistent.data.model.system.Welcome;
 import com.example.tribalassistent.data.model.village.LevelChange;
 import com.example.tribalassistent.data.model.village.Village;

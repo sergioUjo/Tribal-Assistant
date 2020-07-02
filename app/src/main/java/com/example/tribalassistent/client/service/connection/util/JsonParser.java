@@ -1,5 +1,6 @@
-package com.example.tribalassistent.data.comunication;
+package com.example.tribalassistent.client.service.connection.util;
 
+import com.example.tribalassistent.client.service.connection.EventMsg;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.json.JSONObject;
