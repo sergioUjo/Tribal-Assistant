@@ -89,6 +89,7 @@ public class VillageRepository extends BaseRepository implements BuilderServiceA
 
     @Override
     public void upgrade(String buildingName, int villageId, AsyncCallback<Upgrading> async) {
+        if (getBuildingQueue(villageId).size() == 2) return;
         socketConnection.send(new Upgrade(buildingName, villageId), async);
     }
 
